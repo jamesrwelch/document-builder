@@ -1,6 +1,6 @@
 buildscript {
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
         classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:3.0.3'
     }
 }
@@ -48,7 +48,7 @@ allprojects {
 
 subprojects {
     apply plugin: 'maven-publish'
-    apply plugin: 'com.jfrog.bintray'
+    //apply plugin: 'com.jfrog.bintray'
 
     task sourcesJar(type: Jar) {
         classifier = 'sources'
@@ -61,7 +61,7 @@ subprojects {
     }
 
     afterEvaluate { Project project ->
-        bintray {
+/*        bintray {
             user = project.hasProperty('bintrayUsername') ? project.bintrayUsername : ''
             key = project.hasProperty('bintrayApiKey') ? project.bintrayApiKey : ''
             publications = ['maven']
@@ -81,8 +81,20 @@ subprojects {
                 }
             }
         }
-
+*/
         publishing {
+            repositories {
+                maven {
+                    credentials {
+                        def u = System.getenv("ARTIFACTORY_USERNAME") ?: project.hasProperty("artifactoryPublishUsername") ? project.artifactoryPublishUsername : ''
+                        def p = System.getenv("ARTIFACTORY_PASSWORD") ?: project.hasProperty("artifactoryPublishPassword") ? project.artifactoryPublishPassword : ''
+                        username = u
+                        password = p
+                    }
+                    url  "https://jenkins.cs.ox.ac.uk/artifactory/libs-snapshot-local"
+                    //   url  "https://jenkins.cs.ox.ac.uk/artifactory/libs-release-local"
+                }
+            }
             publications {
                 maven(MavenPublication) {
                     artifactId project.artifactId
@@ -120,10 +132,11 @@ subprojects {
             }
         }
     }
-
+/*
     task release {
         dependsOn bintrayUpload, publishGhPages
     }
+*/
 
 }
 
