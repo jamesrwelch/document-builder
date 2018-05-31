@@ -1,14 +1,7 @@
-buildscript {
-    dependencies {
-//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-        classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:3.0.3'
-    }
-}
-
-plugins {
-    id 'org.ajoberstar.github-pages' version '1.1.0'
-    id 'org.asciidoctor.gradle.asciidoctor' version '1.5.1'
-}
+//plugins {
+//    id 'org.ajoberstar.github-pages' version '1.7.2'
+//    id 'org.asciidoctor.gradle.asciidoctor' version '1.5.1'
+//}
 
 project.ext {
     githubUrl = 'https://github.com/jamesrwelch/document-builder'
@@ -20,11 +13,10 @@ allprojects {
     apply plugin: 'idea'
     apply plugin: 'eclipse'
     apply plugin: 'codenarc'
-    apply plugin: 'nebula.provided-base'
 
     group = 'com.craigburke.document'
-    version = '0.5.5'
-    targetCompatibility = 1.6
+    version = '0.6.0-SNAPSHOT'
+    targetCompatibility = 1.8
 
     repositories {
         mavenLocal()
@@ -33,22 +25,21 @@ allprojects {
     }
 
     dependencies {
-        provided 'org.codehaus.groovy:groovy-all:2.4.5'
-        testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+        compile 'org.codehaus.groovy:groovy-all:2.4.11'
+        testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
         testCompile 'cglib:cglib-nodep:3.1'
         testCompile 'org.objenesis:objenesis:2.1'
-        codenarc 'org.codenarc:CodeNarc:0.23'
+        codenarc 'org.codenarc:CodeNarc:1.1'
     }
 
     codenarc {
-        toolVersion = '0.23'
+        toolVersion = '1.1'
         configFile = file("${rootProject.projectDir}/config/codenarc/rules.groovy")
     }
 }
 
 subprojects {
     apply plugin: 'maven-publish'
-    //apply plugin: 'com.jfrog.bintray'
 
     task sourcesJar(type: Jar) {
         classifier = 'sources'
@@ -60,39 +51,19 @@ subprojects {
         from 'build/docs/javadoc'
     }
 
-    afterEvaluate { Project project ->
-/*        bintray {
-            user = project.hasProperty('bintrayUsername') ? project.bintrayUsername : ''
-            key = project.hasProperty('bintrayApiKey') ? project.bintrayApiKey : ''
-            publications = ['maven']
-            publish = true
+    afterEvaluate {Project project ->
 
-            pkg {
-                repo = 'document-builder'
-                userOrg = 'craigburke'
-                name = project.artifactId
-                githubRepo = project.githubUrl
-                githubReleaseNotesFile = 'README.adoc'
-                version {
-                    mavenCentralSync {
-                        user = project.hasProperty('mavenCentralUsername') ? project.mavenCentralUsername : ''
-                        password = project.hasProperty('mavenCentralPassword') ? project.mavenCentralPassword : ''
-                    }
-                }
-            }
-        }
-*/
         publishing {
             repositories {
                 maven {
                     credentials {
                         def u = System.getenv("ARTIFACTORY_USERNAME") ?: project.hasProperty("artifactory_user") ? project.artifactory_user : ''
-                        def p = System.getenv("ARTIFACTORY_PASSWORD") ?: project.hasProperty("artifactory_password") ? project.artifactory_user : ''
+                        def p = System.getenv("ARTIFACTORY_PASSWORD") ?: project.hasProperty("artifactory_apiKey") ? project.artifactory_apiKey : ''
                         username = u
                         password = p
                     }
-                    //url  "https://jenkins.cs.ox.ac.uk/artifactory/libs-snapshot-local"
-                       url  "https://jenkins.cs.ox.ac.uk/artifactory/libs-release-local"
+                    url project.version.endsWith('SNAPSHOT') ? "https://jenkins.cs.ox.ac.uk/artifactory/libs-snapshot-local" :
+                        "https://jenkins.cs.ox.ac.uk/artifactory/libs-release-local"
                 }
             }
             publications {
@@ -133,14 +104,9 @@ subprojects {
 
         }
     }
-/*
-    task release {
-        dependsOn bintrayUpload, publishGhPages
-    }
-*/
 
 }
-
+/*
 asciidoctor {
     sourceDir = file('docs')
 
@@ -174,7 +140,7 @@ githubPages {
 }
 
 publishGhPages.dependsOn asciidoctor
-
+*/
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.9'
+    gradleVersion = '3.5.1'
 }
