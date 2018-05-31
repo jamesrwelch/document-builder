@@ -1,6 +1,6 @@
 buildscript {
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.5'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
         classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:3.0.3'
     }
 }
@@ -11,7 +11,7 @@ plugins {
 }
 
 project.ext {
-    githubUrl = 'https://github.com/craigburke/document-builder'
+    githubUrl = 'https://github.com/jamesrwelch/document-builder'
 }
 
 allprojects {
@@ -143,7 +143,7 @@ asciidoctor {
             icons: 'font',
             'toc': 'left',
             version: project.version,
-            'projectUrl': 'https://github.com/craigburke/document-builder'
+            'projectUrl': 'https://github.com/jamesrwelch/document-builder'
 }
 
 githubPages {
