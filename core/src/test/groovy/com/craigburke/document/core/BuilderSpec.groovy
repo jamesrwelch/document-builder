@@ -236,7 +236,7 @@ class BuilderSpec extends Specification {
         def result = builder.create {
             document {
                 paragraph {
-                    image(url: "http://dummyimage.com/600x400")
+                    image(url: "https://www.google.co.uk/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png")
                 }
             }
         }
@@ -245,8 +245,8 @@ class BuilderSpec extends Specification {
         TextBlock paragraph = result.document.children[0]
         Image image = paragraph.children[0]
         image.data != null
-        image.width == 600
-        image.height == 400
+        image.width == 272
+        image.height == 92
     }
 
     def "Image should have correct aspect ratio if only width is specified"() {
