@@ -1,5 +1,6 @@
 package com.craigburke.document.core
 
+import com.craigburke.document.core.test.TestBuilder
 import spock.lang.Shared
 import spock.lang.Specification
 

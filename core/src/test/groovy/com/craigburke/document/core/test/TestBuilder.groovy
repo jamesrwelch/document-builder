@@ -1,5 +1,6 @@
-package com.craigburke.document.core
+package com.craigburke.document.core.test
 
+import com.craigburke.document.core.Document
 import com.craigburke.document.core.builder.DocumentBuilder
 import groovy.transform.InheritConstructors
 

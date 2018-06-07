@@ -1,9 +1,9 @@
 package com.craigburke.document.core.test
 
-import com.craigburke.document.core.builder.DocumentBuilder
 import com.craigburke.document.core.Document
-import spock.lang.Specification
+import com.craigburke.document.core.builder.DocumentBuilder
 import spock.lang.Shared
+import spock.lang.Specification
 import spock.lang.Unroll
 
 /**
