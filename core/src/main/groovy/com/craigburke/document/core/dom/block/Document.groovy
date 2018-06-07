@@ -31,7 +31,6 @@ class Document extends BlockNode<BaseNode> {
 
     private Map templateMap
 
-    List children = []
     List<EmbeddedFont> embeddedFonts = []
 
     Map getTemplateMap() {
@@ -102,5 +101,10 @@ class Document extends BlockNode<BaseNode> {
 
     boolean isLandscape() {
         this.orientation == LANDSCAPE
+    }
+
+    @Override
+    Margin getDefaultMargin() {
+        DEFAULT_MARGIN
     }
 }

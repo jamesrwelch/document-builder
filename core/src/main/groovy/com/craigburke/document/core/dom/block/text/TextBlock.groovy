@@ -48,4 +48,8 @@ class TextBlock extends BlockNode<BaseNode> implements Bookmarkable, BackgroundA
         elements
     }
 
+    @Override
+    Margin getDefaultMargin() {
+        DEFAULT_MARGIN
+    }
 }

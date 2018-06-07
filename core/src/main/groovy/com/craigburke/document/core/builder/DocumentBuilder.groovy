@@ -91,7 +91,7 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
     }
 
     protected void setBlockProperties(BlockNode node, nodeProperties) {
-        node.margin = node.getClass().defaultMargin.clone()
+        node.margin = node.defaultMargin.clone()
         nodeProperties.each {
             node.margin << it.margin
             if (it.border) {

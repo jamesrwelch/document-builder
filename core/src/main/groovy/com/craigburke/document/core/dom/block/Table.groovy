@@ -91,4 +91,8 @@ class Table extends BlockNode<Row> implements BackgroundAssignable {
 
     }
 
+    @Override
+    Margin getDefaultMargin() {
+        DEFAULT_MARGIN
+    }
 }
