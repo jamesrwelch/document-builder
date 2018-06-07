@@ -1,13 +1,15 @@
 package com.craigburke.document.builder
 
+import com.craigburke.document.core.dom.BaseNode
+import com.craigburke.document.core.dom.LineBreak
+import com.craigburke.document.core.dom.attribute.Font
+import com.craigburke.document.core.dom.attribute.Margin
+import com.craigburke.document.core.dom.block.Document
+import com.craigburke.document.core.dom.block.text.TextBlock
+import com.craigburke.document.core.dom.text.Text
+
 import com.craigburke.document.builder.render.ParagraphRenderer
-import com.craigburke.document.core.BaseNode
-import com.craigburke.document.core.Document
-import com.craigburke.document.core.Font
-import com.craigburke.document.core.LineBreak
-import com.craigburke.document.core.Margin
-import com.craigburke.document.core.Text
-import com.craigburke.document.core.TextBlock
+
 import spock.lang.Specification
 
 /**
@@ -19,7 +21,7 @@ class RendererTestBase extends Specification {
     final float defaultLineHeight = 19f
 
     Document makeDocument() {
-        new Document(margin: Document.defaultMargin, font: new Font())
+        new Document(margin: Document.DEFAULT_MARGIN, font: new Font())
     }
 
     TextBlock makeParagraph(TextBlock paragraph, BaseNode parent = makeDocument()) {

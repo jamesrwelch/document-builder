@@ -1,6 +1,7 @@
 package com.craigburke.document.builder.render
 
-import com.craigburke.document.core.Text
+import com.craigburke.document.core.dom.text.Text
+
 import org.apache.pdfbox.pdmodel.font.PDFont
 
 /**

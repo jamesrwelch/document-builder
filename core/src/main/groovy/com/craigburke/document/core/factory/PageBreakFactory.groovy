@@ -1,6 +1,6 @@
 package com.craigburke.document.core.factory
 
-import com.craigburke.document.core.PageBreak
+import com.craigburke.document.core.dom.PageBreak
 
 /**
  * Factory for line break nodes

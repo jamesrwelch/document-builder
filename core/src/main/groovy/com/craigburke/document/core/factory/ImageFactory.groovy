@@ -1,11 +1,11 @@
 package com.craigburke.document.core.factory
 
-import com.craigburke.document.core.Image
-import com.craigburke.document.core.ImageType
-import com.craigburke.document.core.TextBlock
+import com.craigburke.document.core.dom.Image
+import com.craigburke.document.core.dom.attribute.ImageType
+import com.craigburke.document.core.dom.block.text.TextBlock
 
-import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
+import javax.imageio.ImageIO
 
 /**
  * Factory for image nodes

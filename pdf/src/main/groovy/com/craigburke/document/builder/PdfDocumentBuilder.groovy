@@ -1,20 +1,20 @@
 package com.craigburke.document.builder
 
+import com.craigburke.document.core.dom.Image
+import com.craigburke.document.core.dom.PageBreak
+import com.craigburke.document.core.dom.attribute.EmbeddedFont
+import com.craigburke.document.core.dom.attribute.HeaderFooterOptions
+import com.craigburke.document.core.dom.block.Document
+import com.craigburke.document.core.dom.block.Table
+import com.craigburke.document.core.dom.block.text.TextBlock
+
 import com.craigburke.document.builder.render.ParagraphRenderer
 import com.craigburke.document.builder.render.TableRenderer
-import com.craigburke.document.core.EmbeddedFont
-import com.craigburke.document.core.HeaderFooterOptions
-import com.craigburke.document.core.PageBreak
+import com.craigburke.document.core.builder.DocumentBuilder
 import com.craigburke.document.core.builder.RenderState
+
 import groovy.transform.InheritConstructors
 import groovy.xml.MarkupBuilder
-
-import com.craigburke.document.core.builder.DocumentBuilder
-import com.craigburke.document.core.Document
-import com.craigburke.document.core.TextBlock
-import com.craigburke.document.core.Table
-import com.craigburke.document.core.Image
-
 import org.apache.pdfbox.pdmodel.common.PDMetadata
 
 /**

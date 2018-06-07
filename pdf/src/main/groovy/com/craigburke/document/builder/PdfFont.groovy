@@ -1,7 +1,8 @@
 package com.craigburke.document.builder
 
-import com.craigburke.document.core.EmbeddedFont
-import com.craigburke.document.core.Font
+import com.craigburke.document.core.dom.attribute.EmbeddedFont
+import com.craigburke.document.core.dom.attribute.Font
+
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.font.PDFont
 import org.apache.pdfbox.pdmodel.font.PDType0Font

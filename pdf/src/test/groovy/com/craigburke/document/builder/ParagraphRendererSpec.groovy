@@ -1,7 +1,9 @@
 package com.craigburke.document.builder
 
+import com.craigburke.document.core.dom.block.text.TextBlock
+
 import com.craigburke.document.builder.render.ParagraphRenderer
-import com.craigburke.document.core.TextBlock
+
 import spock.lang.Shared
 
 /**

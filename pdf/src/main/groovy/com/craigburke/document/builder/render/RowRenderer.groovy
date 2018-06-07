@@ -1,9 +1,11 @@
 package com.craigburke.document.builder.render
 
+import com.craigburke.document.core.dom.block.Table
+import com.craigburke.document.core.dom.block.table.Cell
+import com.craigburke.document.core.dom.block.table.Row
+
 import com.craigburke.document.builder.PdfDocument
-import com.craigburke.document.core.Cell
-import com.craigburke.document.core.Row
-import com.craigburke.document.core.Table
+
 import org.apache.pdfbox.pdmodel.PDPageContentStream
 
 /**

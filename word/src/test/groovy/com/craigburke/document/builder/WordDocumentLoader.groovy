@@ -1,16 +1,17 @@
 package com.craigburke.document.builder
 
-import static com.craigburke.document.core.UnitUtil.twipToPoint
+import com.craigburke.document.core.dom.Image
+import com.craigburke.document.core.dom.attribute.Font
+import com.craigburke.document.core.dom.block.Document
+import com.craigburke.document.core.dom.block.Table
+import com.craigburke.document.core.dom.block.table.Cell
+import com.craigburke.document.core.dom.block.table.Row
+import com.craigburke.document.core.dom.block.text.TextBlock
+import com.craigburke.document.core.dom.text.Text
 
-import com.craigburke.document.core.Cell
-import com.craigburke.document.core.Document
-import com.craigburke.document.core.Font
-import com.craigburke.document.core.Image
-import com.craigburke.document.core.TextBlock
-import com.craigburke.document.core.Row
-import com.craigburke.document.core.Table
-import com.craigburke.document.core.Text
 import org.apache.poi.xwpf.usermodel.XWPFDocument
+
+import static com.craigburke.document.core.unit.UnitUtil.twipToPoint
 
 /**
  * Creates a Document object based on byte content of Word file

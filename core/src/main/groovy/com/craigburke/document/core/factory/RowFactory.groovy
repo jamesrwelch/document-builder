@@ -1,6 +1,6 @@
 package com.craigburke.document.core.factory
 
-import com.craigburke.document.core.Row
+import com.craigburke.document.core.dom.block.table.Row
 
 /**
  * Factory for row nodes

@@ -1,12 +1,14 @@
 package com.craigburke.document.builder.render
 
+import com.craigburke.document.core.dom.attribute.Align
+import com.craigburke.document.core.dom.attribute.Font
+import com.craigburke.document.core.dom.attribute.ImageType
+import com.craigburke.document.core.dom.block.text.TextBlock
+import com.craigburke.document.core.dom.text.Link
+import com.craigburke.document.core.dom.text.Text
+
 import com.craigburke.document.builder.PdfDocument
-import com.craigburke.document.core.Align
-import com.craigburke.document.core.Font
-import com.craigburke.document.core.ImageType
-import com.craigburke.document.core.Link
-import com.craigburke.document.core.Text
-import com.craigburke.document.core.TextBlock
+
 import org.apache.pdfbox.pdmodel.PDPageContentStream
 import org.apache.pdfbox.pdmodel.common.PDRectangle
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory
@@ -16,8 +18,8 @@ import org.apache.pdfbox.pdmodel.interactive.action.PDActionURI
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary
 
-import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
+import javax.imageio.ImageIO
 
 /**
  * Rendering element for a Paragraph node

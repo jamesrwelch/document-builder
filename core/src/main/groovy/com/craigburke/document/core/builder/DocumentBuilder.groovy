@@ -1,31 +1,30 @@
 package com.craigburke.document.core.builder
 
-import com.craigburke.document.core.BackgroundAssignable
-import com.craigburke.document.core.BaseNode
-import com.craigburke.document.core.BlockNode
-import com.craigburke.document.core.Bookmarkable
-import com.craigburke.document.core.Cell
-import com.craigburke.document.core.EmbeddedFont
-import com.craigburke.document.core.Heading
-import com.craigburke.document.core.Stylable
-import com.craigburke.document.core.TextBlock
-import com.craigburke.document.core.UnitCategory
+import com.craigburke.document.core.dom.BaseNode
+import com.craigburke.document.core.dom.attribute.BackgroundAssignable
+import com.craigburke.document.core.dom.attribute.EmbeddedFont
+import com.craigburke.document.core.dom.attribute.Font
+import com.craigburke.document.core.dom.attribute.Stylable
+import com.craigburke.document.core.dom.block.BlockNode
+import com.craigburke.document.core.dom.block.Document
+import com.craigburke.document.core.dom.block.table.Cell
+import com.craigburke.document.core.dom.block.text.Heading
+import com.craigburke.document.core.dom.block.text.TextBlock
 
+import com.craigburke.document.core.factory.CellFactory
 import com.craigburke.document.core.factory.CreateFactory
 import com.craigburke.document.core.factory.DocumentFactory
 import com.craigburke.document.core.factory.HeadingFactory
+import com.craigburke.document.core.factory.ImageFactory
+import com.craigburke.document.core.factory.LineBreakFactory
 import com.craigburke.document.core.factory.LinkFactory
 import com.craigburke.document.core.factory.PageBreakFactory
 import com.craigburke.document.core.factory.ParagraphFactory
-import com.craigburke.document.core.factory.LineBreakFactory
-import com.craigburke.document.core.factory.ImageFactory
-import com.craigburke.document.core.factory.TextFactory
-import com.craigburke.document.core.factory.TableFactory
 import com.craigburke.document.core.factory.RowFactory
-import com.craigburke.document.core.factory.CellFactory
+import com.craigburke.document.core.factory.TableFactory
+import com.craigburke.document.core.factory.TextFactory
 
-import com.craigburke.document.core.Document
-import com.craigburke.document.core.Font
+import com.craigburke.document.core.unit.UnitCategory
 
 /**
  * Document Builder base class
@@ -181,6 +180,3 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
     }
 }
 
-enum RenderState {
-    PAGE, HEADER, FOOTER, CUSTOM
-}

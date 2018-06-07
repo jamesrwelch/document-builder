@@ -1,10 +1,11 @@
 package com.craigburke.document.builder
 
-import com.craigburke.document.core.Document
+import com.craigburke.document.core.dom.block.Document
+
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
-import org.apache.pdfbox.pdmodel.common.PDRectangle
 import org.apache.pdfbox.pdmodel.PDPageContentStream
+import org.apache.pdfbox.pdmodel.common.PDRectangle
 
 /**
  * Document node element

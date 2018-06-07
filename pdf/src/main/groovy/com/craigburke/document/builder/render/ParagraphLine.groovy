@@ -1,8 +1,9 @@
 package com.craigburke.document.builder.render
 
+import com.craigburke.document.core.dom.attribute.Font
+import com.craigburke.document.core.dom.block.text.TextBlock
+
 import com.craigburke.document.builder.PdfFont
-import com.craigburke.document.core.Font
-import com.craigburke.document.core.TextBlock
 
 /**
  * A paragraph line

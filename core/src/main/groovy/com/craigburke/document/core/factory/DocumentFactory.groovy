@@ -1,6 +1,6 @@
 package com.craigburke.document.core.factory
 
-import com.craigburke.document.core.Document
+import com.craigburke.document.core.dom.block.Document
 
 /**
  * Factory for document nodes

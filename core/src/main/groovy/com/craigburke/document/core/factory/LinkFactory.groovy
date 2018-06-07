@@ -1,9 +1,7 @@
 package com.craigburke.document.core.factory
 
-import com.craigburke.document.core.BaseNode
-import com.craigburke.document.core.Link
-import com.craigburke.document.core.TextBlock
-import com.craigburke.document.core.Text
+import com.craigburke.document.core.dom.block.text.TextBlock
+import com.craigburke.document.core.dom.text.Link
 
 /**
  * Factory for link nodes

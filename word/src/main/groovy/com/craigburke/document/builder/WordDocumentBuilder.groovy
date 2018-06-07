@@ -1,29 +1,29 @@
 package com.craigburke.document.builder
 
-import com.craigburke.document.core.Link
-
-import static com.craigburke.document.core.UnitUtil.pointToEigthPoint
-import static com.craigburke.document.core.UnitUtil.pointToEmu
-import static com.craigburke.document.core.UnitUtil.pointToTwip
-import static com.craigburke.document.core.UnitUtil.pointToHalfPoint
-
-import com.craigburke.document.core.HeaderFooterOptions
-import com.craigburke.document.core.Heading
-import com.craigburke.document.core.builder.RenderState
-import com.craigburke.document.core.BlockNode
-import com.craigburke.document.core.Cell
-import com.craigburke.document.core.Row
-import com.craigburke.document.core.Font
-import com.craigburke.document.core.Image
-import com.craigburke.document.core.LineBreak
-import com.craigburke.document.core.PageBreak
-import com.craigburke.document.core.TextBlock
-import com.craigburke.document.core.Table
-import com.craigburke.document.core.Text
-import groovy.transform.InheritConstructors
+import com.craigburke.document.core.dom.Image
+import com.craigburke.document.core.dom.LineBreak
+import com.craigburke.document.core.dom.PageBreak
+import com.craigburke.document.core.dom.attribute.Font
+import com.craigburke.document.core.dom.attribute.HeaderFooterOptions
+import com.craigburke.document.core.dom.block.BlockNode
+import com.craigburke.document.core.dom.block.Document
+import com.craigburke.document.core.dom.block.Table
+import com.craigburke.document.core.dom.block.table.Cell
+import com.craigburke.document.core.dom.block.table.Row
+import com.craigburke.document.core.dom.block.text.Heading
+import com.craigburke.document.core.dom.block.text.TextBlock
+import com.craigburke.document.core.dom.text.Link
+import com.craigburke.document.core.dom.text.Text
 
 import com.craigburke.document.core.builder.DocumentBuilder
-import com.craigburke.document.core.Document
+import com.craigburke.document.core.builder.RenderState
+
+import groovy.transform.InheritConstructors
+
+import static com.craigburke.document.core.unit.UnitUtil.pointToEigthPoint
+import static com.craigburke.document.core.unit.UnitUtil.pointToEmu
+import static com.craigburke.document.core.unit.UnitUtil.pointToHalfPoint
+import static com.craigburke.document.core.unit.UnitUtil.pointToTwip
 
 /**
  * Builder for Word documents

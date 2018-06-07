@@ -1,11 +1,13 @@
 package com.craigburke.document.builder
 
+import com.craigburke.document.core.dom.block.Document
+import com.craigburke.document.core.dom.block.Table
+import com.craigburke.document.core.dom.block.table.Cell
+import com.craigburke.document.core.dom.block.table.Row
+
 import com.craigburke.document.builder.render.CellRenderer
 import com.craigburke.document.builder.render.RowRenderer
-import com.craigburke.document.core.Cell
-import com.craigburke.document.core.Document
-import com.craigburke.document.core.Row
-import com.craigburke.document.core.Table
+
 import spock.lang.Shared
 
 /**

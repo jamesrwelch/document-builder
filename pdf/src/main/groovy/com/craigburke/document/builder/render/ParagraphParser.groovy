@@ -1,10 +1,12 @@
 package com.craigburke.document.builder.render
 
+import com.craigburke.document.core.dom.LineBreak
+import com.craigburke.document.core.dom.attribute.Font
+import com.craigburke.document.core.dom.block.text.TextBlock
+import com.craigburke.document.core.dom.text.Text
+
 import com.craigburke.document.builder.PdfFont
-import com.craigburke.document.core.Font
-import com.craigburke.document.core.LineBreak
-import com.craigburke.document.core.Text
-import com.craigburke.document.core.TextBlock
+
 import org.apache.pdfbox.pdmodel.font.PDFont
 
 /**

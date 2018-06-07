@@ -1,7 +1,7 @@
 package com.craigburke.document.core.factory
 
-import com.craigburke.document.core.LineBreak
-import com.craigburke.document.core.TextBlock
+import com.craigburke.document.core.dom.LineBreak
+import com.craigburke.document.core.dom.block.text.TextBlock
 
 /**
  * Factory for line break nodes

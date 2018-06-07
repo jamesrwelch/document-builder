@@ -1,10 +1,11 @@
 package com.craigburke.document.builder
 
-import com.craigburke.document.core.Cell
-import com.craigburke.document.core.Document
-import com.craigburke.document.core.Font
-import com.craigburke.document.core.TextBlock
-import com.craigburke.document.core.Text
+import com.craigburke.document.core.dom.attribute.Font
+import com.craigburke.document.core.dom.block.Document
+import com.craigburke.document.core.dom.block.table.Cell
+import com.craigburke.document.core.dom.block.text.TextBlock
+import com.craigburke.document.core.dom.text.Text
+
 import org.apache.pdfbox.text.PDFTextStripper
 import org.apache.pdfbox.text.TextPosition
 

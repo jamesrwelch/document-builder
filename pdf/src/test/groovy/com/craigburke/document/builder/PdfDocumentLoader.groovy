@@ -1,11 +1,12 @@
 package com.craigburke.document.builder
 
-import com.craigburke.document.core.Cell
-import com.craigburke.document.core.Document
-import com.craigburke.document.core.Image
-import com.craigburke.document.core.TextBlock
-import com.craigburke.document.core.Row
-import com.craigburke.document.core.Table
+import com.craigburke.document.core.dom.Image
+import com.craigburke.document.core.dom.block.Document
+import com.craigburke.document.core.dom.block.Table
+import com.craigburke.document.core.dom.block.table.Cell
+import com.craigburke.document.core.dom.block.table.Row
+import com.craigburke.document.core.dom.block.text.TextBlock
+
 import org.apache.pdfbox.pdmodel.PDDocument
 
 /**
