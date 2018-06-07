@@ -5,37 +5,28 @@ import com.craigburke.document.core.dom.attribute.Dimension
 /**
  * Standard paper size utility. Returned dimensions are inches.
  */
-class PaperSize {
+enum PaperSize {
 
-    static final Dimension A1 = new Dimension(23.4, 33.1)
-    static final Dimension A2 = new Dimension(16.5, 23.4)
-    static final Dimension A3 = new Dimension(11.7, 16.5)
-    static final Dimension A4 = new Dimension(8.27, 11.7)
-    static final Dimension A5 = new Dimension(5.83, 8.27)
-    static final Dimension A6 = new Dimension(4.13, 5.83)
-    static final Dimension LETTER = new Dimension(8.5, 11)
-    static final Dimension LEGAL = new Dimension(8.5, 14)
+    A1(23.4, 33.1),
+    A2(16.5, 23.4),
+    A3(11.7, 16.5),
+    A4(8.27, 11.7),
+    A5(5.83, 8.27),
+    A6(4.13, 5.83),
+    LETTER(8.5, 11.0),
+    LEGAL(8.5, 14.0)
 
-    static Dimension get(String name) {
-        switch (name.toLowerCase()) {
-            case 'a1':
-                return A1
-            case 'a2':
-                return A2
-            case 'a3':
-                return A3
-            case 'a4':
-                return A4
-            case 'a5':
-                return A5
-            case 'a6':
-                return A6
-            case 'letter':
-                return LETTER
-            case 'legal':
-                return LEGAL
-            default:
-                throw new IllegalArgumentException("invalid paper size: $name")
-        }
+    Dimension dimension
+
+    PaperSize(BigDecimal width, BigDecimal height) {
+        dimension = new Dimension(width, height)
+    }
+
+    BigDecimal getWidth() {
+        dimension.width
+    }
+
+    BigDecimal getHeight() {
+        dimension.height
     }
 }

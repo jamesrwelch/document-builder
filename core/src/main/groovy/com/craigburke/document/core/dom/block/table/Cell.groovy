@@ -1,16 +1,14 @@
 package com.craigburke.document.core.dom.block.table
 
 import com.craigburke.document.core.dom.BaseNode
-import com.craigburke.document.core.dom.attribute.Alignable
 import com.craigburke.document.core.dom.attribute.BackgroundAssignable
-import com.craigburke.document.core.dom.attribute.Stylable
+import com.craigburke.document.core.dom.block.BlockNode
 
 /**
  * An individual cell for the Table node
  * @author Craig Burke
  */
-class Cell extends BaseNode implements Stylable, Alignable, BackgroundAssignable {
-    List children = []
+class Cell extends BlockNode<BaseNode> implements BackgroundAssignable {
     Integer width
     Integer colspan = 1
     

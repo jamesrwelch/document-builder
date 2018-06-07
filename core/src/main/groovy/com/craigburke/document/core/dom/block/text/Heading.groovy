@@ -1,6 +1,4 @@
-package com.craigburke.document.core.dom.block
-
-import com.craigburke.document.core.dom.block.TextBlock
+package com.craigburke.document.core.dom.block.text
 
 /**
  * Created by craig on 3/25/15.

@@ -1,5 +1,6 @@
 package com.craigburke.document.core.dom.block
 
+import com.craigburke.document.core.dom.BaseNode
 import com.craigburke.document.core.dom.attribute.Dimension
 import com.craigburke.document.core.dom.attribute.EmbeddedFont
 import com.craigburke.document.core.dom.attribute.Margin
@@ -12,15 +13,16 @@ import static com.craigburke.document.core.unit.UnitUtil.inchToPoint
  * Document node
  * @author Craig Burke
  */
-class Document extends BlockNode {
-    static Margin defaultMargin = new Margin(top: 72, bottom: 72, left: 72, right: 72)
+class Document extends BlockNode<BaseNode> {
+
+    static final Margin DEFAULT_MARGIN = new Margin(top: 72, bottom: 72, left: 72, right: 72)
 
     private static final String PORTRAIT = 'portrait'
     private static final String LANDSCAPE = 'landscape'
 
     int pageCount
-    int width = inchToPoint(PaperSize.LETTER.width)
-    int height = inchToPoint(PaperSize.LETTER.height)
+    BigDecimal width = inchToPoint(PaperSize.LETTER.width)
+    BigDecimal height = inchToPoint(PaperSize.LETTER.height)
     String orientation = PORTRAIT
 
     def template
@@ -28,6 +30,9 @@ class Document extends BlockNode {
     def footer
 
     private Map templateMap
+
+    List children = []
+    List<EmbeddedFont> embeddedFonts = []
 
     Map getTemplateMap() {
         if (templateMap == null) {
@@ -48,16 +53,13 @@ class Document extends BlockNode {
         }
     }
 
-    List children = []
-    List<EmbeddedFont> embeddedFonts = []
-
     /**
      * Set width and height of the document.
      *
      * @param arg name of a standard paper size ("a4", "letter", "legal")
      */
     void setSize(String arg) {
-        setSize(PaperSize.get(arg))
+        setSize(PaperSize.valueOf(arg.toUpperCase()).dimension)
     }
 
     /**

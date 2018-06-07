@@ -1,10 +1,11 @@
-package com.craigburke.document.core.dom.block
+package com.craigburke.document.core.dom.block.text
 
 import com.craigburke.document.core.dom.BaseNode
 import com.craigburke.document.core.dom.LineBreak
 import com.craigburke.document.core.dom.attribute.BackgroundAssignable
 import com.craigburke.document.core.dom.attribute.Bookmarkable
 import com.craigburke.document.core.dom.attribute.Margin
+import com.craigburke.document.core.dom.block.BlockNode
 import com.craigburke.document.core.dom.text.Link
 import com.craigburke.document.core.dom.text.Text
 
@@ -15,16 +16,14 @@ import groovy.transform.AutoClone
  * @author Craig Burke
  */
 @AutoClone
-class TextBlock extends BlockNode implements Bookmarkable, BackgroundAssignable {
-    static Margin defaultMargin = new Margin(top: 12, bottom: 12, left: 0, right: 0)
+class TextBlock extends BlockNode<BaseNode> implements Bookmarkable, BackgroundAssignable {
+    static Margin DEFAULT_MARGIN = new Margin(top: 12, bottom: 12, left: 0, right: 0)
 
     Integer lineSpacing
     BigDecimal lineSpacingMultiplier = 1.15
 
-    List children = []
-
     String getText() {
-        children.findAll { it instanceof Text }*.value.join('')
+        children.findAll {it instanceof Text}.value.join('')
     }
 
     List<BaseNode> add(String value, boolean link = false) {

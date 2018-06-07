@@ -6,5 +6,5 @@ package com.craigburke.document.core.dom
  */
 class BaseNode {
     def element
-    def parent
+    BaseNode parent
 }
