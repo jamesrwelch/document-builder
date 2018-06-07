@@ -1,6 +1,6 @@
 package com.craigburke.document.core.dom.attribute
 
-trait Alignable {
+trait Alignable implements ParentAware {
     Align align = Align.LEFT
 
     void setAlign(String value) {

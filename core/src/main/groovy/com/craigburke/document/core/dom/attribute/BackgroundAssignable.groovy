@@ -1,6 +1,6 @@
 package com.craigburke.document.core.dom.attribute
 
-trait BackgroundAssignable {
+trait BackgroundAssignable implements ParentAware {
     Color background
     
     void setBackground(String value) {
