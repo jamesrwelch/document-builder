@@ -2,13 +2,14 @@ package com.craigburke.document.core.factory
 
 import com.craigburke.document.core.dom.attribute.Align
 import com.craigburke.document.core.dom.block.Document
-import com.craigburke.document.core.dom.block.text.TextBlock
+import com.craigburke.document.core.dom.block.TextBlock
 import com.craigburke.document.core.dom.text.Text
 
 /**
  * Factory for paragraph nodes
  * @author Craig Burke
  */
+@Deprecated
 class ParagraphFactory extends AbstractFactory {
 
     boolean isLeaf() { false }

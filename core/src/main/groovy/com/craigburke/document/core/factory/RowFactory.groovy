@@ -6,6 +6,7 @@ import com.craigburke.document.core.dom.block.table.Row
  * Factory for row nodes
  * @author Craig Burke
  */
+@Deprecated
 class RowFactory extends AbstractFactory {
 
     boolean isLeaf() { false }

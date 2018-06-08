@@ -95,4 +95,10 @@ class Table extends BlockNode<Row> implements BackgroundAssignable {
     Margin getDefaultMargin() {
         DEFAULT_MARGIN
     }
+
+    @Override
+    void setNodeProperties(List<Map> nodePropertiesMap) {
+        super.setNodeProperties(nodePropertiesMap)
+        setNodeBackground(nodePropertiesMap)
+    }
 }

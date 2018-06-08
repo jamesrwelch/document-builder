@@ -6,6 +6,7 @@ import com.craigburke.document.core.dom.block.Document
  * Factory for document nodes
  * @author Craig Burke
  */
+@Deprecated
 class DocumentFactory extends AbstractFactory {
 
     boolean isLeaf() { false }

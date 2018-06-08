@@ -15,4 +15,10 @@ class Row extends BlockNode<Cell> implements BackgroundAssignable {
     Margin getDefaultMargin() {
         Margin.NONE
     }
+
+    @Override
+    void setNodeProperties(List<Map> nodePropertiesMap) {
+        super.setNodeProperties(nodePropertiesMap)
+        setNodeBackground(nodePropertiesMap)
+    }
 }

@@ -21,4 +21,10 @@ class Cell extends BlockNode<BaseNode> implements BackgroundAssignable {
     Margin getDefaultMargin() {
         Margin.NONE
     }
+
+    @Override
+    void setNodeProperties(List<Map> nodePropertiesMap) {
+        super.setNodeProperties(nodePropertiesMap)
+        setNodeBackground(nodePropertiesMap)
+    }
 }

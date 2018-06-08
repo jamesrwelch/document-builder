@@ -15,7 +15,8 @@ class Font implements ColorAssignable, Cloneable {
         properties?.each { key, value -> this[key] = value }
     }
 
-    Object clone() {
+    @Override
+    Font clone() {
         Font result = new Font(family: family, size: size, bold: bold, italic: italic, underline: underline)
         result.color = "#${color.hex}"
         result

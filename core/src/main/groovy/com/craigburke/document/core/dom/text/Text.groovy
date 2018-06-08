@@ -11,4 +11,19 @@ import com.craigburke.document.core.dom.attribute.Stylable
  */
 class Text extends BaseNode implements Stylable, Bookmarkable, BackgroundAssignable {
     String value
+
+    @Override
+    void setNodeFont(List<Map> nodeProperties) {
+        font = cloneParentFont()
+        nodeProperties.each {
+            font << it.font
+        }
+    }
+
+    @Override
+    void setNodeProperties(List<Map> nodePropertiesMap) {
+        super.setNodeProperties(nodePropertiesMap)
+        setNodeFont(nodePropertiesMap)
+        setNodeBackground(nodePropertiesMap)
+    }
 }

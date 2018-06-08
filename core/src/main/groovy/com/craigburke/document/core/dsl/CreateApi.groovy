@@ -7,7 +7,7 @@ import com.craigburke.document.core.builder.DocumentBuilder
 /**
  * @since 31/05/2018
  */
-class CreateApi {
+class CreateApi implements Api {
 
     DocumentBuilder builder
 
@@ -15,17 +15,19 @@ class CreateApi {
         this.builder = builder
     }
 
-    void document(Map attributes = [:], Closure closure = null) {
+    Document document(@DelegatesTo(DocumentApi) Closure closure) {
+        document([:], closure)
+    }
+
+    Document document(Map attributes = [:], @DelegatesTo(DocumentApi) Closure closure = null) {
         Document document = new Document(attributes)
+        document.setNodeProperties(attributes)
         builder.document = document
-        builder.setNodeProperties(document, attributes, 'document')
         builder.initializeDocument(document, builder.out)
 
-        DocumentApi documentApi = new DocumentApi(document)
+        callClosure closure, new DocumentApi(builder, document)
 
-        closure.delegate = documentApi
-        closure.call()
-
-        builder.writeDocument(builder.document, builder.out)
+        builder.writeDocument(document, builder.out)
+        document
     }
 }

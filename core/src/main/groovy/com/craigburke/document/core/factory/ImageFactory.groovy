@@ -2,7 +2,7 @@ package com.craigburke.document.core.factory
 
 import com.craigburke.document.core.dom.Image
 import com.craigburke.document.core.dom.attribute.ImageType
-import com.craigburke.document.core.dom.block.text.TextBlock
+import com.craigburke.document.core.dom.block.TextBlock
 
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
@@ -11,6 +11,7 @@ import javax.imageio.ImageIO
  * Factory for image nodes
  * @author Craig Burke
  */
+@Deprecated
 class ImageFactory extends AbstractFactory {
 
     boolean isLeaf() { true }

@@ -1,13 +1,14 @@
 package com.craigburke.document.core.factory
 
 import com.craigburke.document.core.dom.BaseNode
-import com.craigburke.document.core.dom.block.text.TextBlock
+import com.craigburke.document.core.dom.block.TextBlock
 import com.craigburke.document.core.dom.text.Text
 
 /**
  * Factory for text nodes
  * @author Craig Burke
  */
+@Deprecated
 class TextFactory extends AbstractFactory {
 
     boolean isLeaf() { true }

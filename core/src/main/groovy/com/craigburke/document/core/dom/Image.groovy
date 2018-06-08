@@ -9,10 +9,10 @@ import java.security.MessageDigest
  * @author Craig Burke
  */
 class Image extends BaseNode {
-    String name
+    String hashName
     ImageType type = ImageType.JPG
-    Integer width
-    Integer height
+    BigDecimal width
+    BigDecimal height
     String url
     byte[] data
 

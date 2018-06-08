@@ -10,6 +10,7 @@ import com.craigburke.document.core.builder.RenderState
  * Factory for table nodes
  * @author Craig Burke
  */
+@Deprecated
 class TableFactory extends AbstractFactory {
 
     boolean isLeaf() { false }

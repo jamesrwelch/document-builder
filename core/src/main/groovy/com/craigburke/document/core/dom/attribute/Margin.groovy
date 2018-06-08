@@ -10,10 +10,10 @@ import groovy.transform.AutoClone
 class Margin {
     static final Margin NONE = new Margin(top: 0, right: 0, bottom: 0, left: 0)
 
-    Integer top
-    Integer bottom
-    Integer left
-    Integer right
+    BigDecimal top
+    BigDecimal bottom
+    BigDecimal left
+    BigDecimal right
 
     void setDefaults(Margin defaultMargin) {
         top = (top == null) ? defaultMargin.top : top
@@ -26,4 +26,10 @@ class Margin {
         properties?.each { key, value -> this[key] = value }
     }
 
+    def leftShift(Margin margin) {
+        top = margin.top
+        bottom = margin.bottom
+        left = margin.left
+        right = margin.right
+    }
 }

@@ -1,12 +1,13 @@
 package com.craigburke.document.core.factory
 
 import com.craigburke.document.core.dom.LineBreak
-import com.craigburke.document.core.dom.block.text.TextBlock
+import com.craigburke.document.core.dom.block.TextBlock
 
 /**
  * Factory for line break nodes
  * @author Craig Burke
  */
+@Deprecated
 class LineBreakFactory extends AbstractFactory {
 
     boolean isLeaf() { true }

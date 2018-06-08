@@ -1,11 +1,14 @@
 package com.craigburke.document.core.dom.attribute
 
 import com.craigburke.document.core.dom.BaseNode
+import com.craigburke.document.core.dom.block.Document
 
 /**
  * @since 07/06/2018
  */
-trait ParentAware {
+interface ParentAware {
 
-    BaseNode parent
+    BaseNode getParent()
+
+    Document getDocument()
 }

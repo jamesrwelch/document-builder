@@ -18,4 +18,37 @@ abstract class BlockNode<T extends BaseNode> extends BaseNode implements Stylabl
     List<T> children = []
 
     abstract Margin getDefaultMargin()
+
+    @Override
+    String[] getTemplateKeys(String nodeKey) {
+        def keys = super.getTemplateKeys(nodeKey)
+        if (style) keys += "${nodeKey}.${style}"
+        keys
+    }
+
+    @Override
+    void setNodeFont(List<Map> nodeProperties) {
+        font = cloneParentFont()
+        nodeProperties.each {
+            font << it.font
+        }
+    }
+
+    BlockNode addToChildren(T child) {
+        child.parent = this
+        this
+    }
+
+    @Override
+    void setNodeProperties(List<Map> nodePropertiesMap) {
+        super.setNodeProperties(nodePropertiesMap)
+        setNodeFont(nodePropertiesMap)
+        margin = defaultMargin.clone()
+        nodePropertiesMap.each {
+            margin << it.margin
+            if (it.border) {
+                border << it.border
+            }
+        }
+    }
 }

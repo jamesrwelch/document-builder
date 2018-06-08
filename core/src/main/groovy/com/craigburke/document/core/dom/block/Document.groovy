@@ -3,9 +3,9 @@ package com.craigburke.document.core.dom.block
 import com.craigburke.document.core.dom.BaseNode
 import com.craigburke.document.core.dom.attribute.Dimension
 import com.craigburke.document.core.dom.attribute.EmbeddedFont
+import com.craigburke.document.core.dom.attribute.Font
 import com.craigburke.document.core.dom.attribute.Margin
 import com.craigburke.document.core.dom.attribute.PaperSize
-import com.craigburke.document.core.dom.block.BlockNode
 
 import static com.craigburke.document.core.unit.UnitUtil.inchToPoint
 
@@ -33,7 +33,7 @@ class Document extends BlockNode<BaseNode> {
 
     List<EmbeddedFont> embeddedFonts = []
 
-    Map getTemplateMap() {
+    Map<String, Map> getTemplateMap() {
         if (templateMap == null) {
             loadTemplateMap()
         }
@@ -106,5 +106,13 @@ class Document extends BlockNode<BaseNode> {
     @Override
     Margin getDefaultMargin() {
         DEFAULT_MARGIN
+    }
+
+    @Override
+    void setNodeFont(List<Map> nodeProperties) {
+        font = new Font()
+        nodeProperties.each {
+            font << it.font
+        }
     }
 }

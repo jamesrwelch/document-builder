@@ -1,4 +1,4 @@
-package com.craigburke.document.core.dom.block.text
+package com.craigburke.document.core.dom.block
 
 import com.craigburke.document.core.dom.BaseNode
 import com.craigburke.document.core.dom.LineBreak
@@ -22,8 +22,10 @@ class TextBlock extends BlockNode<BaseNode> implements Bookmarkable, BackgroundA
     Integer lineSpacing
     BigDecimal lineSpacingMultiplier = 1.15
 
+    String name
+
     String getText() {
-        children.findAll {it instanceof Text}.value.join('')
+        children.findAll {it instanceof Text}*.value.join('')
     }
 
     List<BaseNode> add(String value, boolean link = false) {
@@ -44,7 +46,6 @@ class TextBlock extends BlockNode<BaseNode> implements Bookmarkable, BackgroundA
             elements << new LineBreak(parent: this)
         }
 
-        children += elements
         elements
     }
 

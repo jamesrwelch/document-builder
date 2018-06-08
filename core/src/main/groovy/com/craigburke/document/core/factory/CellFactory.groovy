@@ -1,15 +1,16 @@
 package com.craigburke.document.core.factory
 
 import com.craigburke.document.core.dom.BaseNode
+import com.craigburke.document.core.dom.block.TextBlock
 import com.craigburke.document.core.dom.block.table.Cell
 import com.craigburke.document.core.dom.block.table.Row
-import com.craigburke.document.core.dom.block.text.TextBlock
 import com.craigburke.document.core.dom.text.Text
 
 /**
  * Factory for column nodes
  * @author Craig Burke
  */
+@Deprecated
 class CellFactory extends AbstractFactory {
 
     boolean isLeaf() { false }

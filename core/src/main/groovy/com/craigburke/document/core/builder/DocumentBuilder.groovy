@@ -7,9 +7,9 @@ import com.craigburke.document.core.dom.attribute.Font
 import com.craigburke.document.core.dom.attribute.Stylable
 import com.craigburke.document.core.dom.block.BlockNode
 import com.craigburke.document.core.dom.block.Document
+import com.craigburke.document.core.dom.block.TextBlock
 import com.craigburke.document.core.dom.block.table.Cell
-import com.craigburke.document.core.dom.block.text.Heading
-import com.craigburke.document.core.dom.block.text.TextBlock
+import com.craigburke.document.core.dom.text.Heading
 
 import com.craigburke.document.core.factory.CellFactory
 import com.craigburke.document.core.factory.CreateFactory
@@ -24,6 +24,7 @@ import com.craigburke.document.core.factory.RowFactory
 import com.craigburke.document.core.factory.TableFactory
 import com.craigburke.document.core.factory.TextFactory
 
+import com.craigburke.document.core.dsl.CreateApi
 import com.craigburke.document.core.unit.UnitCategory
 
 /**
@@ -35,7 +36,7 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
     Document document
     OutputStream out
     RenderState renderState = RenderState.PAGE
-    protected List<String> imageFileNames = []
+    List<String> imageFileNames = []
 
     DocumentBuilder(OutputStream out) {
         super(true)
@@ -47,6 +48,7 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
         this.out = new FileOutputStream(file)
     }
 
+    @Deprecated
     Font getFont() {
         current.font
     }
@@ -57,7 +59,17 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
         }
     }
 
-    void setNodeProperties(BaseNode node, Map attributes, String nodeKey) {
+    DocumentBuilder create(@DelegatesTo(CreateApi) Closure closure) {
+        use(UnitCategory) {
+            CreateApi createApi = new CreateApi(this)
+            closure.delegate = createApi
+            closure.call()
+        }
+        this
+    }
+
+    @Deprecated
+    public <T extends BaseNode> T setNodeProperties(T node, Map attributes, String nodeKey) {
         String[] templateKeys = getTemplateKeys(node, nodeKey)
         def nodeProperties = []
 
@@ -68,6 +80,7 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
         }
         nodeProperties << attributes
 
+        node.name = nodeKey
         if (node instanceof Stylable) {
             setNodeFont(node, nodeProperties)
         }
@@ -77,8 +90,10 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
         if (node instanceof BackgroundAssignable) {
             setNodeBackground(node, nodeProperties)
         }
+        node
     }
 
+    @Deprecated
     protected void setNodeFont(Stylable node, nodeProperties) {
         node.font = (node instanceof Document) ? new Font() : node.parent.font.clone()
         node.font.size = (node instanceof Heading) ? null : node.font.size
@@ -90,6 +105,7 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
         }
     }
 
+    @Deprecated
     protected void setBlockProperties(BlockNode node, nodeProperties) {
         node.margin = node.defaultMargin.clone()
         nodeProperties.each {
@@ -100,6 +116,7 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
         }
     }
 
+    @Deprecated
     protected void setNodeBackground(BackgroundAssignable node, nodeProperties) {
         nodeProperties.each { Map properties ->
             if (properties.containsKey('background')) {
@@ -112,6 +129,7 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
         }
     }
 
+    @Deprecated
     static String[] getTemplateKeys(BaseNode node, String nodeKey) {
         def keys = [nodeKey]
         if (node instanceof Heading) {
@@ -126,6 +144,7 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
         keys
     }
 
+    @Deprecated
     TextBlock getColumnParagraph(Cell column) {
         if (column.children && column.children[0] instanceof TextBlock) {
             column.children[0]
@@ -137,12 +156,14 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
         }
     }
 
+    @Deprecated
     void addFont(Map params, String location) {
         EmbeddedFont embeddedFont = new EmbeddedFont(params)
         embeddedFont.file = new File(location)
         addFont(embeddedFont)
     }
 
+    @Deprecated
     void addFont(EmbeddedFont embeddedFont) {
         document.embeddedFonts << embeddedFont
         if (addEmbeddedFont) {
@@ -154,10 +175,10 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
 
     abstract void writeDocument(Document document, OutputStream out)
 
-    def addPageBreakToDocument
-    def onTextBlockComplete
-    def onTableComplete
-    def addEmbeddedFont
+    Closure addPageBreakToDocument
+    Closure onTextBlockComplete
+    Closure onTableComplete
+    Closure addEmbeddedFont
 
     def registerObjectFactories() {
         registerFactory('create', new CreateFactory())
