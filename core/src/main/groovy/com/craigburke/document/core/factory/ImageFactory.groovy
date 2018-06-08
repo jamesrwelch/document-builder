@@ -2,7 +2,7 @@ package com.craigburke.document.core.factory
 
 import com.craigburke.document.core.dom.Image
 import com.craigburke.document.core.dom.attribute.ImageType
-import com.craigburke.document.core.dom.block.TextBlock
+import com.craigburke.document.core.dom.block.Paragraph
 
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
@@ -41,7 +41,7 @@ class ImageFactory extends AbstractFactory {
         }
         builder.imageFileNames << image.name
 
-        TextBlock paragraph
+        Paragraph paragraph
         if (builder.parentName == 'paragraph') {
             paragraph = builder.current
         } else {

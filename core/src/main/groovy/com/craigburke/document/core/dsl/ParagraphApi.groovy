@@ -1,6 +1,6 @@
 package com.craigburke.document.core.dsl
 
-import com.craigburke.document.core.dom.block.TextBlock
+import com.craigburke.document.core.dom.block.Paragraph
 
 import com.craigburke.document.core.builder.DocumentBuilder
 
@@ -10,9 +10,9 @@ import com.craigburke.document.core.builder.DocumentBuilder
 class ParagraphApi implements SectionApi {
 
     DocumentBuilder builder
-    TextBlock paragraph
+    Paragraph paragraph
 
-    ParagraphApi(DocumentBuilder builder, TextBlock paragraph) {
+    ParagraphApi(DocumentBuilder builder, Paragraph paragraph) {
         this.paragraph = paragraph
         this.builder = builder
     }

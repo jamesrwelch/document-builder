@@ -2,7 +2,7 @@ package com.craigburke.document.core.factory
 
 import com.craigburke.document.core.dom.attribute.Align
 import com.craigburke.document.core.dom.block.Document
-import com.craigburke.document.core.dom.block.TextBlock
+import com.craigburke.document.core.dom.block.Paragraph
 import com.craigburke.document.core.dom.text.Text
 
 /**
@@ -17,7 +17,7 @@ class ParagraphFactory extends AbstractFactory {
     boolean onHandleNodeAttributes(FactoryBuilderSupport builder, node, Map attributes) { false }
 
     def newInstance(FactoryBuilderSupport builder, name, value, Map attributes) {
-        TextBlock paragraph = new TextBlock(attributes)
+        Paragraph paragraph = new Paragraph(attributes)
         paragraph.parent = builder.parentName == 'create' ? builder.document : builder.current
         builder.setNodeProperties(paragraph, attributes, 'paragraph')
 

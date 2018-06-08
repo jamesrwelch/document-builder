@@ -3,11 +3,11 @@ package com.craigburke.document.core.builder
 import com.craigburke.document.core.dom.Image
 import com.craigburke.document.core.dom.attribute.Align
 import com.craigburke.document.core.dom.block.Document
+import com.craigburke.document.core.dom.block.Paragraph
 import com.craigburke.document.core.dom.block.Table
 import com.craigburke.document.core.dom.block.table.Cell
 import com.craigburke.document.core.dom.block.table.Row
-import com.craigburke.document.core.dom.block.text.Heading
-import com.craigburke.document.core.dom.block.text.TextBlock
+import com.craigburke.document.core.dom.text.Heading
 import com.craigburke.document.core.dom.text.Link
 import com.craigburke.document.core.dom.text.Text
 
@@ -40,10 +40,7 @@ class BuilderSpec extends Specification {
         }
 
         then:
-        result.document != null
-
-        and:
-        result.document.getClass() == Document
+        result.document
     }
 
     def "use file in builder constructor"() {
@@ -79,7 +76,7 @@ class BuilderSpec extends Specification {
 
     def "create A4 document"() {
         when:
-        Map result = builder.create {
+        def result = builder.create {
             document(size: 'A4', margin: [top: 2.cm, bottom: 1.cm]) {
                 paragraph(align: 'center', font: [size: 24.pt]) {
                     text 'ISO 216'
@@ -94,7 +91,7 @@ class BuilderSpec extends Specification {
 
     def "create document with custom size"() {
         when:
-        Map result = builder.create {
+        def result = builder.create {
             document(size: [14.8.cm, 21.cm], margin: [top: 2.cm, bottom: 1.cm]) {
                 paragraph(align: 'center', font: [size: 24.pt]) {
                     text 'ISO 216'
@@ -109,7 +106,7 @@ class BuilderSpec extends Specification {
 
     def "use landscape orientation"() {
         when:
-        Map result = builder.create {
+        def result = builder.create {
             document(size: 'A4', orientation: 'landscape', margin: [top: 2.cm, bottom: 1.cm]) {
                 paragraph(align: 'center', font: [size: 24.pt]) {
                     text 'Landscape'
@@ -157,7 +154,7 @@ class BuilderSpec extends Specification {
 
     def 'onTextBlockComplete is called after a paragraph finishes'() {
         def onTextBlockComplete = Mock(Closure)
-        builder.onTextBlockComplete = {TextBlock paragraph -> onTextBlockComplete(paragraph)}
+        builder.onTextBlockComplete = {Paragraph paragraph -> onTextBlockComplete(paragraph)}
 
         when:
         builder.create {
@@ -167,7 +164,7 @@ class BuilderSpec extends Specification {
         }
 
         then:
-        1 * onTextBlockComplete.call(_ as TextBlock)
+        1 * onTextBlockComplete.call(_ as Paragraph)
     }
 
     def 'onTableComple is called after table finishes'() {
@@ -243,6 +240,28 @@ class BuilderSpec extends Specification {
         thrown(Exception)
     }
 
+
+    def "Image can be loaded from URL using url method"() {
+        when:
+        def result = builder.create {
+            document {
+                paragraph {
+                    image("https://www.google.co.uk/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png")
+                }
+            }
+        }
+
+        then:
+        notThrown(UnknownHostException)
+
+        and:
+        Paragraph paragraph = result.document.children[0]
+        Image image = paragraph.children[0]
+        image.data != null
+        image.width == 272
+        image.height == 92
+    }
+
     def "Image can be loaded from URL"() {
         when:
         def result = builder.create {
@@ -254,11 +273,31 @@ class BuilderSpec extends Specification {
         }
 
         then:
-        TextBlock paragraph = result.document.children[0]
+        notThrown(UnknownHostException)
+
+        and:
+        Paragraph paragraph = result.document.children[0]
         Image image = paragraph.children[0]
         image.data != null
         image.width == 272
         image.height == 92
+    }
+
+    def "Image should have correct aspect ratio if only width is specified using data method"() {
+        when:
+        def result = builder.create {
+            document {
+                paragraph {
+                    image(imageData, width: 250.px) // cheeseburger.jpg is 500x431
+                }
+            }
+        }
+
+        then:
+        Paragraph paragraph = result.document.children[0]
+        Image image = paragraph.children[0]
+        image.width.toInteger() == 250
+        image.height.toInteger() == 215
     }
 
     def "Image should have correct aspect ratio if only width is specified"() {
@@ -272,10 +311,10 @@ class BuilderSpec extends Specification {
         }
 
         then:
-        TextBlock paragraph = result.document.children[0]
+        Paragraph paragraph = result.document.children[0]
         Image image = paragraph.children[0]
-        image.width == 250
-        image.height == 215
+        image.width.toInteger() == 250
+        image.height.toInteger() == 215
     }
 
     def "Image should have correct aspect ratio if only height is specified"() {
@@ -289,10 +328,10 @@ class BuilderSpec extends Specification {
         }
 
         then:
-        TextBlock paragraph = result.document.children[0]
+        Paragraph paragraph = result.document.children[0]
         Image image = paragraph.children[0]
-        image.width == 250
-        image.height == 216
+        image.width.toInteger() == 250
+        image.height.toInteger() == 216
     }
 
     def "create a simple paragraph"() {
@@ -303,7 +342,7 @@ class BuilderSpec extends Specification {
             }
         }
 
-        TextBlock paragraph = result.document.children[0]
+        Paragraph paragraph = result.document.children[0]
 
         then:
         paragraph.text == 'FOO BAR!'
@@ -320,10 +359,10 @@ class BuilderSpec extends Specification {
             }
         }
 
-        TextBlock paragraph1 = result.document.children[0]
-        TextBlock paragraph2 = result.document.children[1]
-        TextBlock paragraph3 = result.document.children[2]
-        TextBlock paragraph4 = result.document.children[3]
+        Paragraph paragraph1 = result.document.children[0]
+        Paragraph paragraph2 = result.document.children[1]
+        Paragraph paragraph3 = result.document.children[2]
+        Paragraph paragraph4 = result.document.children[3]
 
         then:
         paragraph1.align == Align.LEFT
@@ -350,7 +389,7 @@ class BuilderSpec extends Specification {
         }
 
         Document document = result.document
-        TextBlock paragraph = document.children[0]
+        Paragraph paragraph = document.children[0]
         Text text1 = paragraph.children[0]
         Text text2 = paragraph.children[1]
 
@@ -394,8 +433,8 @@ class BuilderSpec extends Specification {
         Cell column1 = row.children[0]
         Cell column2 = row.children[1]
 
-        TextBlock paragraph1 = column1.children[0]
-        TextBlock paragraph2 = column2.children[0]
+        Paragraph paragraph1 = column1.children[0]
+        Paragraph paragraph2 = column2.children[0]
 
         Text text1 = paragraph1.children[0]
         Text text2 = paragraph2.children[0]
@@ -568,14 +607,14 @@ class BuilderSpec extends Specification {
         then:
         table1.background.hex == backgroundColors[0] - '#'
         table1.children[0].background.hex == backgroundColors[0] - '#'
-        table1.children[0].children.each { Cell column ->
+        table1.children[0].children.each {Cell column ->
             assert column.background.hex == backgroundColors[0] - '#'
         }
 
         and:
         table2.background == null
         table2.children[0].background.hex == backgroundColors[1] - '#'
-        table2.children[0].children.each { Cell column ->
+        table2.children[0].children.each {Cell column ->
             assert column.background.hex == backgroundColors[1] - '#'
         }
 
@@ -595,14 +634,14 @@ class BuilderSpec extends Specification {
         when:
         Document result = builder.create {
             document {
-               paragraph(background: YELLOW) {
+                paragraph(background: YELLOW) {
                     text 'FOO'
                     text 'BAR', background: GREY
-               }
+                }
             }
         }.document
 
-        TextBlock paragraph = result.children[0]
+        Paragraph paragraph = result.children[0]
         Text text1 = paragraph.children[0]
         Text text2 = paragraph.children[1]
 
@@ -629,7 +668,7 @@ class BuilderSpec extends Specification {
             }
         }.document
 
-        TextBlock paragraph = result.children[0]
+        Paragraph paragraph = result.children[0]
         Link link1 = paragraph.children[0]
         Link link2 = paragraph.children[1]
         Link link3 = paragraph.children[2]
@@ -650,8 +689,8 @@ class BuilderSpec extends Specification {
 
         where:
         node                                   | nodeKey     || expectedKeys
-        new TextBlock()                        | 'paragraph' || ['paragraph']
-        new TextBlock(style: 'foo')            | 'paragraph' || ['paragraph', 'paragraph.foo']
+        new Paragraph()                        | 'paragraph' || ['paragraph']
+        new Paragraph(style: 'foo')            | 'paragraph' || ['paragraph', 'paragraph.foo']
 
         new Text()                             | 'text'      || ['text']
         new Text(style: 'bar')                 | 'text'      || ['text', 'text.bar']

@@ -7,7 +7,7 @@ import com.craigburke.document.core.dom.attribute.Font
 import com.craigburke.document.core.dom.attribute.Stylable
 import com.craigburke.document.core.dom.block.BlockNode
 import com.craigburke.document.core.dom.block.Document
-import com.craigburke.document.core.dom.block.TextBlock
+import com.craigburke.document.core.dom.block.Paragraph
 import com.craigburke.document.core.dom.block.table.Cell
 import com.craigburke.document.core.dom.text.Heading
 
@@ -122,7 +122,7 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
             if (properties.containsKey('background')) {
                 node.background = properties.background
             }
-            boolean canCascade = (!(node.parent instanceof TextBlock) && (node.parent instanceof BackgroundAssignable))
+            boolean canCascade = (!(node.parent instanceof Paragraph) && (node.parent instanceof BackgroundAssignable))
             if (canCascade && !node.background && node.parent.background) {
                 node.background = "#${node.parent.background.hex}"
             }
@@ -145,11 +145,11 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
     }
 
     @Deprecated
-    TextBlock getColumnParagraph(Cell column) {
-        if (column.children && column.children[0] instanceof TextBlock) {
+    Paragraph getColumnParagraph(Cell column) {
+        if (column.children && column.children[0] instanceof Paragraph) {
             column.children[0]
         } else {
-            TextBlock paragraph = new TextBlock(font: column.font.clone(), parent: column, align: column.align)
+            Paragraph paragraph = new Paragraph(font: column.font.clone(), parent: column, align: column.align)
             setNodeProperties(paragraph, [margin: [top: 0, left: 0, bottom: 0, right: 0]], 'paragraph')
             column.children << paragraph
             paragraph

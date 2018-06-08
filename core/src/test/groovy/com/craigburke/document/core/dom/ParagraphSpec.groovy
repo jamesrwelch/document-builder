@@ -1,6 +1,6 @@
 package com.craigburke.document.core.dom
 
-import com.craigburke.document.core.dom.block.text.TextBlock
+import com.craigburke.document.core.dom.block.Paragraph
 import com.craigburke.document.core.dom.text.Text
 
 import spock.lang.Shared
@@ -12,11 +12,12 @@ import spock.lang.Specification
  */
 class ParagraphSpec extends Specification {
 
-    @Shared TextBlock paragraph
+    @Shared
+    Paragraph paragraph
     static final int DEFAULT_FONT_SIZE = 12
 
     def setup() {
-        paragraph = new TextBlock()
+        paragraph = new Paragraph()
         paragraph.children << new Text(font:[size:DEFAULT_FONT_SIZE])
     }
 

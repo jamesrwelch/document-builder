@@ -1,7 +1,7 @@
 package com.craigburke.document.core.factory
 
 import com.craigburke.document.core.dom.BaseNode
-import com.craigburke.document.core.dom.block.TextBlock
+import com.craigburke.document.core.dom.block.Paragraph
 import com.craigburke.document.core.dom.text.Text
 
 /**
@@ -16,7 +16,7 @@ class TextFactory extends AbstractFactory {
     boolean onHandleNodeAttributes(FactoryBuilderSupport builder, node, Map attributes) { false }
 
     def newInstance(FactoryBuilderSupport builder, name, value, Map attributes) {
-        TextBlock paragraph
+        Paragraph paragraph
         if (builder.parentName == 'paragraph') {
             paragraph = builder.current
         } else {

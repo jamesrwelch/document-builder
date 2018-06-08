@@ -1,7 +1,7 @@
 package com.craigburke.document.core.factory
 
 import com.craigburke.document.core.dom.BaseNode
-import com.craigburke.document.core.dom.block.TextBlock
+import com.craigburke.document.core.dom.block.Paragraph
 import com.craigburke.document.core.dom.block.table.Cell
 import com.craigburke.document.core.dom.block.table.Row
 import com.craigburke.document.core.dom.text.Text
@@ -24,7 +24,7 @@ class CellFactory extends AbstractFactory {
         builder.setNodeProperties(cell, attributes, 'cell')
 
         if (value) {
-            TextBlock paragraph = builder.getColumnParagraph(cell)
+            Paragraph paragraph = builder.getColumnParagraph(cell)
             paragraph.add(value as String).each { BaseNode node ->
                 if (node instanceof Text) {
                     builder.setNodeProperties(node, [:], 'text')

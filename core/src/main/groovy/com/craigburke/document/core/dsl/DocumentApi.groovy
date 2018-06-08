@@ -3,7 +3,7 @@ package com.craigburke.document.core.dsl
 import com.craigburke.document.core.dom.attribute.Align
 import com.craigburke.document.core.dom.attribute.EmbeddedFont
 import com.craigburke.document.core.dom.block.Document
-import com.craigburke.document.core.dom.block.TextBlock
+import com.craigburke.document.core.dom.block.Paragraph
 
 import com.craigburke.document.core.builder.DocumentBuilder
 
@@ -46,7 +46,7 @@ class DocumentApi implements TableApi<Document> {
     }
 
     private DocumentApi handleParagraph(Map attributes, Closure closure, String text) {
-        TextBlock paragraph = new TextBlock(attributes)
+        Paragraph paragraph = new Paragraph(attributes)
         document.addToChildren(paragraph)
         paragraph.setNodeProperties(attributes)
 

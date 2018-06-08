@@ -2,7 +2,7 @@ package com.craigburke.document.core.dsl
 
 import com.craigburke.document.core.dom.attribute.Font
 import com.craigburke.document.core.dom.attribute.Margin
-import com.craigburke.document.core.dom.block.TextBlock
+import com.craigburke.document.core.dom.block.Paragraph
 import com.craigburke.document.core.dom.block.table.Cell
 
 import com.craigburke.document.core.builder.DocumentBuilder
@@ -21,11 +21,11 @@ class CellApi implements SectionApi, TableApi<Cell> {
     }
 
     @Override
-    TextBlock getParagraph() {
-        if (cell.children && cell.children.first() instanceof TextBlock) {
-            cell.children.first() as TextBlock
+    Paragraph getParagraph() {
+        if (cell.children && cell.children.first() instanceof Paragraph) {
+            cell.children.first() as Paragraph
         } else {
-            TextBlock paragraph = new TextBlock(font: cell.font.clone() as Font, parent: cell, align: cell.align)
+            Paragraph paragraph = new Paragraph(font: cell.font.clone() as Font, parent: cell, align: cell.align)
             paragraph.setNodeProperties(margin: Margin.NONE)
         }
     }

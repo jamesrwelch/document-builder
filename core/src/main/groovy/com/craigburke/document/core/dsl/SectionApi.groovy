@@ -3,7 +3,7 @@ package com.craigburke.document.core.dsl
 import com.craigburke.document.core.dom.BaseNode
 import com.craigburke.document.core.dom.Image
 import com.craigburke.document.core.dom.LineBreak
-import com.craigburke.document.core.dom.block.TextBlock
+import com.craigburke.document.core.dom.block.Paragraph
 import com.craigburke.document.core.dom.text.Link
 import com.craigburke.document.core.dom.text.Text
 
@@ -15,7 +15,7 @@ import javax.imageio.ImageIO
  */
 trait SectionApi implements Api {
 
-    abstract TextBlock getParagraph()
+    abstract Paragraph getParagraph()
 
     SectionApi text(Map attributes = [:], String text) {
 

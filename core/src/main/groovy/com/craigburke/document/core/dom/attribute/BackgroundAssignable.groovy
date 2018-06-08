@@ -1,6 +1,6 @@
 package com.craigburke.document.core.dom.attribute
 
-import com.craigburke.document.core.dom.block.TextBlock
+import com.craigburke.document.core.dom.block.Paragraph
 
 trait BackgroundAssignable implements ParentAware {
     Color background
@@ -13,7 +13,7 @@ trait BackgroundAssignable implements ParentAware {
     }
 
     void setNodeBackground(List<Map> nodeProperties) {
-        if (parent instanceof BackgroundAssignable && !(parent instanceof TextBlock)) {
+        if (parent instanceof BackgroundAssignable && !(parent instanceof Paragraph)) {
             if (!background && parent.background) {
                 setBackground("#${parent.background.hex}")
             }

@@ -46,6 +46,10 @@ class TableSpec extends Specification {
         Table innerTable = outerTable.children[0].children[1].children[0]
 
         then:
+        outerTable
+        innerTable
+
+        and:
         outerTable.children[0].children[0].children[0].text == 'OUTER TABLE'
 
         and:

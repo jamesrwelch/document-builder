@@ -16,7 +16,7 @@ import groovy.transform.AutoClone
  * @author Craig Burke
  */
 @AutoClone
-class TextBlock extends BlockNode<BaseNode> implements Bookmarkable, BackgroundAssignable {
+class Paragraph extends BlockNode<BaseNode> implements Bookmarkable, BackgroundAssignable {
     static Margin DEFAULT_MARGIN = new Margin(top: 12, bottom: 12, left: 0, right: 0)
 
     Integer lineSpacing
