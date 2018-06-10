@@ -1,4 +1,4 @@
-package com.craigburke.document.core.dsl
+package ox.softeng.document.core.dsl
 
 import com.craigburke.document.core.dom.block.Document
 
@@ -22,6 +22,7 @@ class CreateApi implements Api {
     Document document(Map attributes = [:], @DelegatesTo(DocumentApi) Closure closure = null) {
         Document document = new Document(attributes)
         document.setNodeProperties(attributes)
+
         builder.document = document
         builder.initializeDocument(document, builder.out)
 

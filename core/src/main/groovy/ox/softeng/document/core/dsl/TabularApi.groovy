@@ -1,4 +1,4 @@
-package com.craigburke.document.core.dsl
+package ox.softeng.document.core.dsl
 
 import com.craigburke.document.core.dom.block.Table
 import com.craigburke.document.core.dom.block.table.Row

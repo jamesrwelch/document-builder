@@ -104,6 +104,11 @@ class Document extends BlockNode<BaseNode> {
     }
 
     @Override
+    Document getDocument() {
+        this
+    }
+
+    @Override
     Margin getDefaultMargin() {
         DEFAULT_MARGIN
     }

@@ -24,8 +24,9 @@ import com.craigburke.document.core.factory.RowFactory
 import com.craigburke.document.core.factory.TableFactory
 import com.craigburke.document.core.factory.TextFactory
 
-import com.craigburke.document.core.dsl.CreateApi
 import com.craigburke.document.core.unit.UnitCategory
+
+import ox.softeng.document.core.dsl.CreateApi
 
 /**
  * Document Builder base class
@@ -38,6 +39,11 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
     RenderState renderState = RenderState.PAGE
     List<String> imageFileNames = []
 
+    Closure addPageBreakToDocument
+    Closure onTextBlockComplete
+    Closure onTableComplete
+    Closure addEmbeddedFont
+
     DocumentBuilder(OutputStream out) {
         super(true)
         this.out = out
@@ -48,16 +54,10 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
         this.out = new FileOutputStream(file)
     }
 
-    @Deprecated
-    Font getFont() {
-        current.font
-    }
 
-    def invokeMethod(String name, args) {
-        use(UnitCategory) {
-            super.invokeMethod(name, args)
-        }
-    }
+    abstract void initializeDocument(Document document, OutputStream out)
+
+    abstract void writeDocument(Document document, OutputStream out)
 
     DocumentBuilder create(@DelegatesTo(CreateApi) Closure closure) {
         use(UnitCategory) {
@@ -66,6 +66,17 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
             closure.call()
         }
         this
+    }
+
+    def invokeMethod(String name, args) {
+        use(UnitCategory) {
+            super.invokeMethod(name, args)
+        }
+    }
+
+    @Deprecated
+    Font getFont() {
+        current.font
     }
 
     @Deprecated
@@ -171,15 +182,7 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
         }
     }
 
-    abstract void initializeDocument(Document document, OutputStream out)
-
-    abstract void writeDocument(Document document, OutputStream out)
-
-    Closure addPageBreakToDocument
-    Closure onTextBlockComplete
-    Closure onTableComplete
-    Closure addEmbeddedFont
-
+    @Deprecated
     def registerObjectFactories() {
         registerFactory('create', new CreateFactory())
         registerFactory('document', new DocumentFactory())

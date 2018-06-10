@@ -1,4 +1,4 @@
-package com.craigburke.document.core.dsl
+package ox.softeng.document.core.dsl
 
 import com.craigburke.document.core.dom.attribute.Font
 import com.craigburke.document.core.dom.attribute.Margin
@@ -25,7 +25,8 @@ class CellApi extends ParagraphApi implements TableApi<Cell> {
             return cell.children.first() as Paragraph
         }
         Paragraph paragraph = new Paragraph(font: cell.font.clone() as Font, parent: cell, align: cell.align)
-        return paragraph.setNodeProperties(margin: Margin.NONE)
+        paragraph.setNodeProperties(margin: Margin.NONE)
+        paragraph
     }
 
     @Override

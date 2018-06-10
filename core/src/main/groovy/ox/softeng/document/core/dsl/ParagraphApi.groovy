@@ -1,4 +1,4 @@
-package com.craigburke.document.core.dsl
+package ox.softeng.document.core.dsl
 
 import com.craigburke.document.core.dom.BaseNode
 import com.craigburke.document.core.dom.Image
@@ -31,7 +31,7 @@ class ParagraphApi implements Api {
 
     ParagraphApi text(Map attributes = [:], String text) {
 
-        List<BaseNode> elements = paragraph.add(text, false)
+        List<BaseNode> elements = getParagraph().add(text, false)
 
         (elements.findAll {it instanceof Text} as List<Text>).each {textNode ->
             textNode.style = attributes.style
@@ -48,7 +48,7 @@ class ParagraphApi implements Api {
 
     ParagraphApi link(Map attributes = [:], String url, String displayText) {
 
-        List elements = paragraph.add(displayText, true)
+        List elements = getParagraph().add(displayText, true)
 
         (elements.findAll {it instanceof Link} as List<Link>).each {link ->
             link.url = url
@@ -90,13 +90,13 @@ class ParagraphApi implements Api {
         image.hashName = "${image.hash}.${image.type.value}"
         builder.imageFileNames << image.hashName
 
-        paragraph.addToChildren(image)
+        getParagraph().addToChildren(image)
 
         this
     }
 
     ParagraphApi lineBreak() {
-        paragraph.addToChildren(new LineBreak())
+        getParagraph().addToChildren(new LineBreak())
         this
     }
 }
