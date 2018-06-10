@@ -1,9 +1,11 @@
 package com.craigburke.document.core.dsl
 
+import com.craigburke.document.core.dom.PageBreak
 import com.craigburke.document.core.dom.attribute.Align
 import com.craigburke.document.core.dom.attribute.EmbeddedFont
 import com.craigburke.document.core.dom.block.Document
 import com.craigburke.document.core.dom.block.Paragraph
+import com.craigburke.document.core.dom.text.Heading
 
 import com.craigburke.document.core.builder.DocumentBuilder
 
@@ -45,6 +47,55 @@ class DocumentApi implements TableApi<Document> {
         handleParagraph(attributes, closure, null)
     }
 
+    DocumentApi pageBreak() {
+        PageBreak pageBreak = new PageBreak()
+        document.addToChildren(pageBreak)
+        if (builder.addPageBreakToDocument) builder.addPageBreakToDocument(pageBreak, document)
+        this
+    }
+
+    DocumentApi heading1(Map attributes = [:], String text) {
+        handleHeader(attributes, 1, text)
+    }
+
+    DocumentApi heading2(Map attributes = [:], String text) {
+        handleHeader(attributes, 2, text)
+    }
+
+    DocumentApi heading3(Map attributes = [:], String text) {
+        handleHeader(attributes, 3, text)
+    }
+
+    DocumentApi heading4(Map attributes = [:], String text) {
+        handleHeader(attributes, 4, text)
+    }
+
+    DocumentApi heading5(Map attributes = [:], String text) {
+        handleHeader(attributes, 5, text)
+    }
+
+    DocumentApi heading6(Map attributes = [:], String text) {
+        handleHeader(attributes, 6, text)
+    }
+
+    @Override
+    Document getCurrentNode() {
+        document
+    }
+
+    private DocumentApi handleHeader(Map attributes, Integer level, String text) {
+        Heading heading = new Heading(attributes)
+        heading.level = level
+        document.addToChildren(heading)
+        heading.setNodeProperties(attributes)
+        heading.value = text
+
+        //TODO
+        if (builder.onTextBlockComplete) {
+            builder.onTextBlockComplete(heading)
+        }
+    }
+
     private DocumentApi handleParagraph(Map attributes, Closure closure, String text) {
         Paragraph paragraph = new Paragraph(attributes)
         document.addToChildren(paragraph)
@@ -65,10 +116,5 @@ class DocumentApi implements TableApi<Document> {
         }
 
         this
-    }
-
-    @Override
-    Document getCurrentNode() {
-        document
     }
 }

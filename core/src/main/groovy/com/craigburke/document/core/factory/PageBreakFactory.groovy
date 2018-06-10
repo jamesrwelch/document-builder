@@ -6,6 +6,7 @@ import com.craigburke.document.core.dom.PageBreak
  * Factory for line break nodes
  * @author Craig Burke
  */
+@Deprecated
 class PageBreakFactory extends AbstractFactory {
 
     boolean isLeaf() { true }

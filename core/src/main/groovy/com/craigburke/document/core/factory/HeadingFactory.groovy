@@ -7,6 +7,7 @@ import com.craigburke.document.core.dom.text.Text
  * Factory for heading nodes
  * @author Craig Burke
  */
+@Deprecated
 class HeadingFactory extends AbstractFactory {
 
     boolean isLeaf() { false }

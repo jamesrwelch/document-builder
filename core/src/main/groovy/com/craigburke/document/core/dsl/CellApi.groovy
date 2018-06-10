@@ -10,24 +10,22 @@ import com.craigburke.document.core.builder.DocumentBuilder
 /**
  * @since 07/06/2018
  */
-class CellApi implements SectionApi, TableApi<Cell> {
+class CellApi extends ParagraphApi implements TableApi<Cell> {
 
-    DocumentBuilder builder
     Cell cell
 
     CellApi(DocumentBuilder builder, Cell cell) {
+        super(builder)
         this.cell = cell
-        this.builder = builder
     }
 
     @Override
     Paragraph getParagraph() {
         if (cell.children && cell.children.first() instanceof Paragraph) {
-            cell.children.first() as Paragraph
-        } else {
-            Paragraph paragraph = new Paragraph(font: cell.font.clone() as Font, parent: cell, align: cell.align)
-            paragraph.setNodeProperties(margin: Margin.NONE)
+            return cell.children.first() as Paragraph
         }
+        Paragraph paragraph = new Paragraph(font: cell.font.clone() as Font, parent: cell, align: cell.align)
+        return paragraph.setNodeProperties(margin: Margin.NONE)
     }
 
     @Override

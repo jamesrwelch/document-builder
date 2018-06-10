@@ -7,6 +7,7 @@ import com.craigburke.document.core.dom.attribute.Font
 import com.craigburke.document.core.dom.attribute.HeaderFooterOptions
 import com.craigburke.document.core.dom.block.BlockNode
 import com.craigburke.document.core.dom.block.Document
+import com.craigburke.document.core.dom.block.Paragraph
 import com.craigburke.document.core.dom.block.Table
 import com.craigburke.document.core.dom.block.table.Cell
 import com.craigburke.document.core.dom.block.table.Row
