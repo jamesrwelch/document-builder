@@ -13,7 +13,7 @@ import static com.craigburke.document.core.unit.UnitUtil.inchToPoint
  * Document node
  * @author Craig Burke
  */
-class Document extends BlockNode<BaseNode> {
+class Document extends BlockNode<Document, BaseNode> {
 
     static final Margin DEFAULT_MARGIN = new Margin(top: 72, bottom: 72, left: 72, right: 72)
 

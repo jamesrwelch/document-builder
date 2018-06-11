@@ -54,7 +54,6 @@ abstract class DocumentBuilder extends FactoryBuilderSupport {
         this.out = new FileOutputStream(file)
     }
 
-
     abstract void initializeDocument(Document document, OutputStream out)
 
     abstract void writeDocument(Document document, OutputStream out)

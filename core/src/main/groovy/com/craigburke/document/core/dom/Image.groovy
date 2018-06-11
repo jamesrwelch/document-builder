@@ -1,6 +1,7 @@
 package com.craigburke.document.core.dom
 
 import com.craigburke.document.core.dom.attribute.ImageType
+import com.craigburke.document.core.dom.block.Paragraph
 
 import java.security.MessageDigest
 
@@ -8,7 +9,7 @@ import java.security.MessageDigest
  * Image node
  * @author Craig Burke
  */
-class Image extends BaseNode {
+class Image extends BaseNode<Paragraph> {
     String hashName
     ImageType type = ImageType.JPG
     BigDecimal width
@@ -21,7 +22,7 @@ class Image extends BaseNode {
     }
 
     byte[] getData() {
-        if(this.@data == null && url != null) {
+        if (!this.@data && url) {
             this.data = new URL(url).bytes
         }
         this.@data

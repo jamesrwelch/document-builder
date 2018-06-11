@@ -9,18 +9,26 @@ import com.craigburke.document.core.dom.block.table.Row
  * Table node which contains children of children
  * @author Craig Burke
  */
-class Table extends BlockNode<Row> implements BackgroundAssignable {
+class Table extends BlockNode<Paragraph, Row> implements BackgroundAssignable {
     static Margin DEFAULT_MARGIN = new Margin(top: 12, bottom: 12, left: 0, right: 0)
 
     Integer padding = 10
     Integer width
     List<BigDecimal> columns = []
 
+    List<Row> getRows() {
+        children
+    }
+
+    Row getRowAt(Integer index) {
+        children[index]
+    }
+
     int getColumnCount() {
         if (columns) {
             columns.size()
         } else {
-            (children) ? children.max { it.children.size() }.children.size() : 0
+            rows ? rows.max {it.getNumberOfColumns()}.getNumberOfColumns() : 0
         }
     }
 
@@ -29,30 +37,46 @@ class Table extends BlockNode<Row> implements BackgroundAssignable {
 
         width = Math.min(width ?: maxWidth, maxWidth)
         if (!columns) {
-            columnCount.times { columns << 1 }
+            columnCount.times {columns << 1}
         }
 
         List<BigDecimal> columnWidths = computeColumnWidths()
 
-        children.each { row ->
+        rows.each {row ->
             int columnWidthIndex = 0
-            row.children.eachWithIndex { column, index ->
+            row.cells.eachWithIndex {column, index ->
                 int endIndex = columnWidthIndex + column.colspan - 1
                 BigDecimal missingBorderWidth = (column.colspan - 1) * border.size
                 column.width = columnWidths[columnWidthIndex..endIndex].sum() + missingBorderWidth
                 columnWidthIndex += column.colspan
-                column.children.findAll { it instanceof Table }.each { it.normalizeColumnWidths() }
+                column.findAllChildTables().each {it.normalizeColumnWidths()}
+            }
+        }
+    }
+
+    void updateRowspanColumns() {
+        Set<Cell> updatedColumns = [] as Set
+
+        rows.eachWithIndex {row, rowIndex ->
+            row.cells.eachWithIndex {column, columnIndex ->
+                if (column.rowspan > 1 && !updatedColumns.contains(column)) {
+                    int rowspanEnd = Math.min(rows.size() - 1, rowIndex + column.rowspan - 1)
+                    (rowIndex + 1..rowspanEnd).each {i ->
+                        getRowAt(i).addToCells(columnIndex, column)
+                    }
+                    updatedColumns << column
+                }
             }
         }
     }
 
     List<BigDecimal> computeColumnWidths() {
-        BigDecimal relativeTotal = columns.sum()
+        BigDecimal relativeTotal = columns.sum() as BigDecimal
         BigDecimal totalBorderWidth = (columnCount + 1) * border.size
         BigDecimal totalCellWidth = width - totalBorderWidth
 
         List<BigDecimal> columnWidths = []
-        columns.eachWithIndex { column, index ->
+        columns.eachWithIndex {column, index ->
             if (index == columns.size() - 1) {
                 columnWidths << totalCellWidth - ((columnWidths.sum() ?: 0) as BigDecimal)
             } else {
@@ -63,32 +87,12 @@ class Table extends BlockNode<Row> implements BackgroundAssignable {
 
     }
 
-    void updateRowspanColumns() {
-        def updatedColumns = []
-
-        children.eachWithIndex { row, rowIndex ->
-            row.children.eachWithIndex { column, columnIndex ->
-                if (column.rowspan > 1 && !updatedColumns.contains(column)) {
-                    int rowspanEnd = Math.min(children.size() - 1, rowIndex + column.rowspan - 1)
-                    (rowIndex + 1..rowspanEnd).each {
-                        children[it].children.addAll(columnIndex, [column])
-                    }
-                    updatedColumns << column
-                }
-            }
-        }
-    }
-
     private int getMaxWidth() {
-        if (parent instanceof Document) {
-            parent.width - parent.margin.left - parent.margin.right
-        } else if (parent instanceof Cell) {
-            Table outerTable = parent.parent.parent
-            parent.width - (outerTable.padding * 2)
-        } else {
-            0
+        if (parent instanceof Cell) {
+            Table outerTable = parent.getTable()
+            return parent.width - (outerTable.padding * 2)
         }
-
+        (parent as Document).width - parent.margin.left - parent.margin.right
     }
 
     @Override

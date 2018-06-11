@@ -8,6 +8,7 @@ import com.craigburke.document.core.dom.attribute.Margin
 import com.craigburke.document.core.dom.block.BlockNode
 import com.craigburke.document.core.dom.text.Link
 import com.craigburke.document.core.dom.text.Text
+import com.craigburke.document.core.dom.text.TextNode
 
 import groovy.transform.AutoClone
 
@@ -16,7 +17,7 @@ import groovy.transform.AutoClone
  * @author Craig Burke
  */
 @AutoClone
-class Paragraph extends BlockNode<BaseNode> implements Bookmarkable, BackgroundAssignable {
+class Paragraph extends BlockNode<Document, BaseNode> implements Bookmarkable, BackgroundAssignable {
     static Margin DEFAULT_MARGIN = new Margin(top: 12, bottom: 12, left: 0, right: 0)
 
     Integer lineSpacing
@@ -28,12 +29,14 @@ class Paragraph extends BlockNode<BaseNode> implements Bookmarkable, BackgroundA
         children.findAll {it instanceof Text}*.value.join('')
     }
 
-    List<BaseNode> add(String value, boolean link = false) {
+    List<BaseNode> add(String text, Map attributes, String url = null) {
         List<BaseNode> elements = []
-        String[] textSections = value.split('\n')
+        String[] textSections = text.split('\n')
 
         textSections.each { String section ->
-            Text element = link ? new Link(value: section, parent: this) : new Text(value: section, parent: this)
+            TextNode element = url ? new Link(value: section, parent: this, url: url) : new Text(value: section, parent: this)
+            element.style = attributes.style
+            element.setNodeProperties(attributes)
 
             elements << element
 
@@ -42,7 +45,7 @@ class Paragraph extends BlockNode<BaseNode> implements Bookmarkable, BackgroundA
             }
         }
 
-        if (value.endsWith('\n')) {
+        if (text.endsWith('\n')) {
             elements << new LineBreak(parent: this)
         }
 

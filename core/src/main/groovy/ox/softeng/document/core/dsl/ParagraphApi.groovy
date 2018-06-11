@@ -1,11 +1,8 @@
 package ox.softeng.document.core.dsl
 
-import com.craigburke.document.core.dom.BaseNode
 import com.craigburke.document.core.dom.Image
 import com.craigburke.document.core.dom.LineBreak
 import com.craigburke.document.core.dom.block.Paragraph
-import com.craigburke.document.core.dom.text.Link
-import com.craigburke.document.core.dom.text.Text
 
 import com.craigburke.document.core.builder.DocumentBuilder
 
@@ -30,14 +27,7 @@ class ParagraphApi implements Api {
     }
 
     ParagraphApi text(Map attributes = [:], String text) {
-
-        List<BaseNode> elements = getParagraph().add(text, false)
-
-        (elements.findAll {it instanceof Text} as List<Text>).each {textNode ->
-            textNode.style = attributes.style
-            textNode.setNodeProperties(attributes)
-        }
-
+        getParagraph().add(text, attributes)
         this
     }
 
@@ -47,15 +37,7 @@ class ParagraphApi implements Api {
     }
 
     ParagraphApi link(Map attributes = [:], String url, String displayText) {
-
-        List elements = getParagraph().add(displayText, true)
-
-        (elements.findAll {it instanceof Link} as List<Link>).each {link ->
-            link.url = url
-            link.style = attributes.style
-            link.setNodeProperties(attributes)
-        }
-
+        getParagraph().add(displayText, attributes, url)
         this
     }
 
@@ -95,8 +77,8 @@ class ParagraphApi implements Api {
         this
     }
 
-    ParagraphApi lineBreak() {
-        getParagraph().addToChildren(new LineBreak())
+    ParagraphApi lineBreak(Integer height = 0) {
+        getParagraph().addToChildren(new LineBreak(height: height))
         this
     }
 }

@@ -8,9 +8,9 @@ import com.craigburke.document.core.dom.block.Document
  * The base node for all document nodes
  * @author Craig Burke
  */
-abstract class BaseNode implements ParentAware {
+abstract class BaseNode<P extends BaseNode> implements ParentAware<P> {
     def element
-    BaseNode parent
+    P parent
     String name
 
     BaseNode() {
@@ -23,10 +23,10 @@ abstract class BaseNode implements ParentAware {
 
     @Override
     Document getDocument() {
-        parent instanceof Document ? parent : parent.getDocument()
+        parent.getDocument()
     }
 
-    void setParent(BaseNode parent) {
+    void setParent(P parent) {
         this.@parent = parent
         if (parent instanceof BlockNode) {
             parent.children << this

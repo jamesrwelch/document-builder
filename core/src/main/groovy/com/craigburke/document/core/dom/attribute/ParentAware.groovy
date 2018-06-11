@@ -6,9 +6,9 @@ import com.craigburke.document.core.dom.block.Document
 /**
  * @since 07/06/2018
  */
-interface ParentAware {
+interface ParentAware<T extends BaseNode> {
 
-    BaseNode getParent()
+    T getParent()
 
     Document getDocument()
 }

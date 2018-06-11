@@ -19,7 +19,7 @@ trait BackgroundAssignable implements ParentAware {
             }
         }
         nodeProperties.each {
-            background = it.background ?: background
+            if (it.background) setBackground(it.background)
         }
 
     }

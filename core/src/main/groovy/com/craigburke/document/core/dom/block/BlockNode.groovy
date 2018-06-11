@@ -10,12 +10,12 @@ import com.craigburke.document.core.dom.attribute.Stylable
  * The base node for all block nodes
  * @author Craig Burke
  */
-abstract class BlockNode<T extends BaseNode> extends BaseNode implements Stylable, Alignable {
+abstract class BlockNode<P extends BaseNode, C extends BaseNode> extends BaseNode<P> implements Stylable, Alignable {
 
     Margin margin = new Margin()
     Border border = new Border()
 
-    List<T> children = []
+    List<C> children = []
 
     abstract Margin getDefaultMargin()
 
@@ -34,8 +34,13 @@ abstract class BlockNode<T extends BaseNode> extends BaseNode implements Stylabl
         }
     }
 
-    BlockNode addToChildren(T child) {
+    BlockNode addToChildren(C child) {
         child.parent = this
+        this
+    }
+
+    BlockNode addToChildren(Integer indexToAddAt, C child) {
+        children.add(indexToAddAt, child)
         this
     }
 
