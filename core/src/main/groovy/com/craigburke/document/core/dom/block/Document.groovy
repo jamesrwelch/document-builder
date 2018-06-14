@@ -13,7 +13,7 @@ import static com.craigburke.document.core.unit.UnitUtil.inchToPoint
  * Document node
  * @author Craig Burke
  */
-class Document extends BlockNode<Document, BaseNode> {
+abstract class Document extends BlockNode<Document, BaseNode> {
 
     static final Margin DEFAULT_MARGIN = new Margin(top: 72, bottom: 72, left: 72, right: 72)
 
@@ -25,13 +25,13 @@ class Document extends BlockNode<Document, BaseNode> {
     BigDecimal height = inchToPoint(PaperSize.LETTER.height)
     String orientation = PORTRAIT
 
-    def template
-    def header
-    def footer
+    Closure template
+    Closure header
+    Closure footer
 
     private Map templateMap
 
-    List<EmbeddedFont> embeddedFonts = []
+    private List<EmbeddedFont> embeddedFonts = []
 
     Map<String, Map> getTemplateMap() {
         if (templateMap == null) {
@@ -40,11 +40,15 @@ class Document extends BlockNode<Document, BaseNode> {
         templateMap
     }
 
+    List<EmbeddedFont> getEmbeddedFonts() {
+        return embeddedFonts
+    }
+
     private void loadTemplateMap() {
         templateMap = [:]
         if (template && template instanceof Closure) {
             def templateDelegate = new Expando()
-            templateDelegate.metaClass.methodMissing = { name, args ->
+            templateDelegate.metaClass.methodMissing = {name, args ->
                 templateMap[name] = args[0]
             }
             template.delegate = templateDelegate
@@ -101,6 +105,11 @@ class Document extends BlockNode<Document, BaseNode> {
 
     boolean isLandscape() {
         this.orientation == LANDSCAPE
+    }
+
+    Document addToEmbeddedFonts(EmbeddedFont embeddedFont) {
+        embeddedFonts << embeddedFont
+        this
     }
 
     @Override

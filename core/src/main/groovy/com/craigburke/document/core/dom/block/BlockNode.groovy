@@ -3,26 +3,23 @@ package com.craigburke.document.core.dom.block
 import com.craigburke.document.core.dom.BaseNode
 import com.craigburke.document.core.dom.attribute.Alignable
 import com.craigburke.document.core.dom.attribute.Border
-import com.craigburke.document.core.dom.attribute.Margin
+import com.craigburke.document.core.dom.attribute.MarginAssignable
 import com.craigburke.document.core.dom.attribute.Stylable
 
 /**
  * The base node for all block nodes
  * @author Craig Burke
  */
-abstract class BlockNode<P extends BaseNode, C extends BaseNode> extends BaseNode<P> implements Stylable, Alignable {
+abstract class BlockNode<P extends BlockNode, C extends BaseNode> extends BaseNode<P> implements Stylable, Alignable, MarginAssignable {
 
-    Margin margin = new Margin()
     Border border = new Border()
 
     List<C> children = []
 
-    abstract Margin getDefaultMargin()
-
     @Override
-    String[] getTemplateKeys(String nodeKey) {
+    List<String> getTemplateKeys(String nodeKey) {
         def keys = super.getTemplateKeys(nodeKey)
-        if (style) keys += "${nodeKey}.${style}"
+        if (style) keys += "${nodeKey}.${style}".toString()
         keys
     }
 

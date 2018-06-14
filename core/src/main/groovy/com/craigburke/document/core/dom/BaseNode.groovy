@@ -9,7 +9,6 @@ import com.craigburke.document.core.dom.block.Document
  * @author Craig Burke
  */
 abstract class BaseNode<P extends BaseNode> implements ParentAware<P> {
-    def element
     P parent
     String name
 
@@ -17,7 +16,7 @@ abstract class BaseNode<P extends BaseNode> implements ParentAware<P> {
         name = getClass().simpleName.toLowerCase()
     }
 
-    String[] getTemplateKeys(String nodeKey) {
+    List<String> getTemplateKeys(String nodeKey) {
         [nodeKey]
     }
 

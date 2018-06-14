@@ -11,7 +11,7 @@ import com.craigburke.document.core.builder.DocumentBuilder
 /**
  * @since 31/05/2018
  */
-class SectionApi implements TableApi<Document> {
+class SectionApi {
 
     DocumentBuilder builder
     Document document
@@ -21,7 +21,7 @@ class SectionApi implements TableApi<Document> {
         this.builder = builder
     }
 
-    SectionApi paragraph(@DelegatesTo(ParagraphApi) Closure closure) {
+    SectionApi paragraph(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ParagraphApi) Closure closure) {
         paragraph([:], closure)
     }
 
@@ -29,14 +29,17 @@ class SectionApi implements TableApi<Document> {
         handleParagraph(attributes, null, text)
     }
 
-    SectionApi paragraph(Map attributes = [:], @DelegatesTo(ParagraphApi) Closure closure = null) {
+    SectionApi paragraph(Map attributes = [:], String text,
+                         @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ParagraphApi) Closure closure) {
+        handleParagraph(attributes, closure, text)
+    }
+
+    SectionApi paragraph(Map attributes = [:], @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ParagraphApi) Closure closure = null) {
         handleParagraph(attributes, closure, null)
     }
 
     SectionApi pageBreak() {
-        PageBreak pageBreak = new PageBreak()
-        document.addToChildren(pageBreak)
-        if (builder.addPageBreakToDocument) builder.addPageBreakToDocument(pageBreak, document)
+        document.addToChildren(new PageBreak())
         this
     }
 
@@ -64,22 +67,13 @@ class SectionApi implements TableApi<Document> {
         handleHeader(attributes, 6, text)
     }
 
-    @Override
-    Document getCurrentNode() {
-        document
-    }
-
     protected SectionApi handleHeader(Map attributes, Integer level, String text) {
         Heading heading = new Heading(attributes)
         heading.level = level
         document.addToChildren(heading)
         heading.setNodeProperties(attributes)
         heading.value = text
-
-        //TODO
-        if (builder.onTextBlockComplete) {
-            builder.onTextBlockComplete(heading)
-        }
+        this
     }
 
     protected SectionApi handleParagraph(Map attributes, Closure closure, String text) {
@@ -91,16 +85,12 @@ class SectionApi implements TableApi<Document> {
             paragraph.align = paragraph.align ?: Align.LEFT
         }
         ParagraphApi paragraphApi = new ParagraphApi(builder, paragraph)
-        if (closure) {
-            callClosure closure, paragraphApi
-        } else if (text) {
+        if (text) {
             paragraphApi.text(attributes, text)
         }
-
-        if (builder.onTextBlockComplete) {
-            builder.onTextBlockComplete(paragraph)
+        if (closure) {
+            callClosure closure, paragraphApi
         }
-
         this
     }
 }

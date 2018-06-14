@@ -11,10 +11,18 @@ import groovy.transform.InheritConstructors
  * @author Craig Burke
  */
 @InheritConstructors
-class TestBuilder extends DocumentBuilder {
+class TestBuilder extends DocumentBuilder<TestDocument> {
     @Override
-    void initializeDocument(Document document, OutputStream out) { }
+    TestDocument createDocument(Map attributes) {
+        document = new TestDocument(attributes)
+        document
+    }
 
     @Override
-    void writeDocument(Document document, OutputStream out) { }
+    void writeDocument() {
+    }
+}
+
+class TestDocument extends Document {
+
 }

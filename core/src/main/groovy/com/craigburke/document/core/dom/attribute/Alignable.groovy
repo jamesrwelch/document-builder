@@ -6,4 +6,8 @@ trait Alignable implements ParentAware {
     void setAlign(String value) {
         align = Align.valueOf(value.toUpperCase())
     }
+
+    void setAlign(Align align) {
+        this.@align = align
+    }
 }

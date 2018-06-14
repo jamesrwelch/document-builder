@@ -5,7 +5,7 @@ package com.craigburke.document.core.dom.attribute
  * @author Craig Burke
  */
 class Border implements ColorAssignable {
-    Integer size = 1
+    BigDecimal size = 1.0
 
     def leftShift(Map properties) {
         properties?.each { key, value -> this[key] = value }

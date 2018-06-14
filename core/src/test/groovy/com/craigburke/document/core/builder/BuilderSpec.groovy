@@ -13,6 +13,7 @@ import com.craigburke.document.core.dom.text.Text
 
 import com.craigburke.document.core.test.TestBuilder
 
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -152,43 +153,6 @@ class BuilderSpec extends Specification {
         embeddedFont.name == 'Open Sans'
     }
 
-    def 'onTextBlockComplete is called after a paragraph finishes'() {
-        def onTextBlockComplete = Mock(Closure)
-        builder.onTextBlockComplete = {Paragraph paragraph -> onTextBlockComplete(paragraph)}
-
-        when:
-        builder.create {
-            document {
-                paragraph 'FOO BAR!'
-            }
-        }
-
-        then:
-        1 * onTextBlockComplete.call(_ as Paragraph)
-    }
-
-    def 'onTableComple is called after table finishes'() {
-        def onTableComplete = Mock(Closure)
-        builder.onTableComplete = {Table table -> onTableComplete(table)}
-
-        when:
-        builder.create {
-            document {
-                table {
-                    row {
-                        cell('Column1')
-                        cell('Column2')
-                        cell('Column3')
-                    }
-
-                }
-            }
-        }
-
-        then:
-        1 * onTableComplete.call(_ as Table)
-    }
-
     def "Text element shouldn't have children"() {
         when:
         builder.create {
@@ -240,7 +204,7 @@ class BuilderSpec extends Specification {
         thrown(Exception)
     }
 
-
+    @Ignore
     def "Image can be loaded from URL using url method"() {
         when:
         def result = builder.create {
@@ -262,6 +226,7 @@ class BuilderSpec extends Specification {
         image.height == 92
     }
 
+    @Ignore
     def "Image can be loaded from URL"() {
         when:
         def result = builder.create {
@@ -526,12 +491,12 @@ class BuilderSpec extends Specification {
 
         Document document = result.document
 
-        def paragraph1 = document.children[0].children[0]
-        def paragraph2 = document.children[1].children[0]
-        def paragraph3 = document.children[2].children[0]
+        Text paragraph1 = document.children[0].children[0]
+        Text paragraph2 = document.children[1].children[0]
+        Text paragraph3 = document.children[2].children[0]
 
-        def table1 = document.children[3].children[0].children[0].children[0]
-        def table2 = document.children[4].children[0].children[0].children[0]
+        Paragraph table1 = document.children[3].children[0].children[0].children[0]
+        Paragraph table2 = document.children[4].children[0].children[0].children[0]
 
         then:
         paragraph1.font.family == 'Courier'
@@ -684,8 +649,12 @@ class BuilderSpec extends Specification {
 
     @Unroll('Template keys calculated for #description')
     def "template keys are calculated"() {
-        expect:
-        DocumentBuilder.getTemplateKeys(node, nodeKey) == expectedKeys.toArray()
+        when:
+        List<String> actualKeys = node.getTemplateKeys(nodeKey)
+
+        then:
+        actualKeys.size() == expectedKeys.size()
+        actualKeys.each {assert it in expectedKeys}
 
         where:
         node                                   | nodeKey     || expectedKeys

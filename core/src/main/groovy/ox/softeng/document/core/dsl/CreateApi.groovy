@@ -15,20 +15,22 @@ class CreateApi implements Api {
         this.builder = builder
     }
 
-    Document document(@DelegatesTo(DocumentApi) Closure closure) {
+    CreateApi document(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DocumentApi) Closure closure) {
         document([:], closure)
     }
 
-    Document document(Map attributes = [:], @DelegatesTo(DocumentApi) Closure closure = null) {
-        Document document = new Document(attributes)
-        document.setNodeProperties(attributes)
+    CreateApi document(Map<String, Object> attributes = [:],
+                       @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DocumentApi) Closure closure = null) {
+        try {
+            Document document = builder.createDocument(attributes)
+            document.setNodeProperties(attributes)
 
-        builder.document = document
-        builder.initializeDocument(document, builder.out)
+            callClosure closure, new DocumentApi(builder, document)
 
-        callClosure closure, new DocumentApi(builder, document)
-
-        builder.writeDocument(document, builder.out)
-        document
+            builder.writeDocument()
+        } finally {
+            builder.close()
+        }
+        this
     }
 }

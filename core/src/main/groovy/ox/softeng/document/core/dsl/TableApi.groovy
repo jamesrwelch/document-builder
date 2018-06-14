@@ -13,11 +13,11 @@ trait TableApi<K extends BlockNode> implements Api {
 
     abstract K getCurrentNode()
 
-    TableApi table(@DelegatesTo(TabularApi) Closure closure) {
+    TableApi table(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = TabularApi) Closure closure) {
         table([:], closure)
     }
 
-    TableApi table(Map attributes = [:], @DelegatesTo(TabularApi) Closure closure = null) {
+    TableApi table(Map attributes = [:], @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = TabularApi) Closure closure = null) {
         Table table = new Table(attributes)
         currentNode.addToChildren(table)
 
@@ -27,9 +27,6 @@ trait TableApi<K extends BlockNode> implements Api {
 
         if (currentNode instanceof Document || builder.renderState != RenderState.PAGE) {
             table.normalizeColumnWidths()
-        }
-        if (currentNode instanceof Document && builder.onTableComplete) {
-            builder.onTableComplete(table)
         }
 
         this

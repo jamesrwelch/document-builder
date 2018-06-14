@@ -3,6 +3,7 @@ package com.craigburke.document.core.dom.attribute
 import com.craigburke.document.core.dom.block.Paragraph
 
 trait BackgroundAssignable implements ParentAware {
+
     Color background
 
     void setBackground(String value) {
@@ -10,6 +11,10 @@ trait BackgroundAssignable implements ParentAware {
             background = background ?: new Color()
             background.color = value
         }
+    }
+
+    void setBackground(Color color) {
+        this.@background = color
     }
 
     void setNodeBackground(List<Map> nodeProperties) {

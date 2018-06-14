@@ -22,11 +22,11 @@ class RowApi implements Api {
         handleCell(attributes, null, text)
     }
 
-    RowApi cell(@DelegatesTo(CellApi) Closure closure) {
+    RowApi cell(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CellApi) Closure closure) {
         cell([:], closure)
     }
 
-    RowApi cell(Map attributes = [:], @DelegatesTo(CellApi) Closure closure = null) {
+    RowApi cell(Map attributes = [:], @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CellApi) Closure closure = null) {
         handleCell(attributes, closure, null)
     }
 

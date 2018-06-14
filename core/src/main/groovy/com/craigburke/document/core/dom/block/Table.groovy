@@ -9,11 +9,11 @@ import com.craigburke.document.core.dom.block.table.Row
  * Table node which contains children of children
  * @author Craig Burke
  */
-class Table extends BlockNode<Paragraph, Row> implements BackgroundAssignable {
+class Table extends BlockNode<BlockNode, Row> implements BackgroundAssignable {
     static Margin DEFAULT_MARGIN = new Margin(top: 12, bottom: 12, left: 0, right: 0)
 
-    Integer padding = 10
-    Integer width
+    BigDecimal padding = 10.0
+    BigDecimal width
     List<BigDecimal> columns = []
 
     List<Row> getRows() {
@@ -87,7 +87,7 @@ class Table extends BlockNode<Paragraph, Row> implements BackgroundAssignable {
 
     }
 
-    private int getMaxWidth() {
+    private BigDecimal getMaxWidth() {
         if (parent instanceof Cell) {
             Table outerTable = parent.getTable()
             return parent.width - (outerTable.padding * 2)

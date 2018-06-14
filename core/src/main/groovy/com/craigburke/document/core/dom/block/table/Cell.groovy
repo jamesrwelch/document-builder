@@ -11,7 +11,7 @@ import com.craigburke.document.core.dom.block.Table
  * @author Craig Burke
  */
 class Cell extends BlockNode<Row, BaseNode> implements BackgroundAssignable {
-    Integer width
+    BigDecimal width
     Integer colspan = 1
     
     Integer rowspan = 1

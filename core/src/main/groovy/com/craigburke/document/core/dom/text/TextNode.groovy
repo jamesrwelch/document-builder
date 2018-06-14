@@ -15,6 +15,13 @@ abstract class TextNode<P extends BlockNode> extends BaseNode<P> implements Styl
     String value
 
     @Override
+    List<String> getTemplateKeys(String nodeKey) {
+        def keys = super.getTemplateKeys(nodeKey)
+        if (style) keys += "${nodeKey}.${style}".toString()
+        keys
+    }
+
+    @Override
     void setNodeFont(List<Map> nodeProperties) {
         font = cloneParentFont()
         nodeProperties.each {

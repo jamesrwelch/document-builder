@@ -11,4 +11,6 @@ interface ParentAware<T extends BaseNode> {
     T getParent()
 
     Document getDocument()
+
+    List<String> getTemplateKeys(String nodeKey)
 }

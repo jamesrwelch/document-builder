@@ -18,11 +18,11 @@ class TabularApi implements Api {
         this.builder = builder
     }
 
-    TabularApi row(@DelegatesTo(RowApi) Closure closure) {
+    TabularApi row(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = RowApi) Closure closure) {
         row([:], closure)
     }
 
-    TabularApi row(Map attributes, @DelegatesTo(RowApi) Closure closure) {
+    TabularApi row(Map attributes, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = RowApi) Closure closure) {
         Row row = new Row(attributes)
         table.addToChildren(row)
         row.setNodeProperties(attributes)
