@@ -2,6 +2,8 @@ package com.craigburke.document.core.builder
 
 import com.craigburke.document.core.dom.Image
 import com.craigburke.document.core.dom.attribute.Align
+import com.craigburke.document.core.dom.attribute.HeaderFooterOptions
+import com.craigburke.document.core.dom.block.BlockNode
 import com.craigburke.document.core.dom.block.Document
 import com.craigburke.document.core.dom.block.Paragraph
 import com.craigburke.document.core.dom.block.Table
@@ -17,6 +19,9 @@ import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Builder core tests
@@ -687,4 +692,313 @@ class BuilderSpec extends Specification {
         description = "${nodeKey}${node.style ? ".${node.style}" : ''}"
     }
 
+    def "simple paragraph header in document map"() {
+        given:
+        def headerFooterOptions = new HeaderFooterOptions(
+            pageNumber: 1,
+            pageCount: 2,
+            dateGenerated: OffsetDateTime.parse('2018-06-21T15:06Z')
+        )
+
+        when:
+        Document result = builder.create {
+            document(header: {
+                paragraph 'HEADER'
+            }) {
+                paragraph 'Content'
+            }
+        }.document
+
+        then:
+        notThrown(Exception)
+
+        and:
+        result.header instanceof Closure
+        result.children.size() == 1
+
+        when:
+        BlockNode header = builder.buildHeaderNode(headerFooterOptions)
+
+        then:
+        header instanceof Paragraph
+        (header as Paragraph).text == 'HEADER'
+
+    }
+
+    def "simple paragraph header in document closure"() {
+        given:
+        def headerFooterOptions = new HeaderFooterOptions(
+            pageNumber: 1,
+            pageCount: 2,
+            dateGenerated: OffsetDateTime.parse('2018-06-21T15:06Z')
+        )
+
+        when:
+        Document result = builder.create {
+            document {
+                header {
+                    paragraph 'HEADER'
+                }
+                paragraph 'Content'
+            }
+        }.document
+
+        then:
+        notThrown(Exception)
+
+        and:
+        result.header instanceof Closure
+        result.children.size() == 1
+
+        when:
+        BlockNode header = builder.buildHeaderNode(headerFooterOptions)
+
+        then:
+        header instanceof Paragraph
+        (header as Paragraph).text == 'HEADER'
+
+    }
+
+    def "paragraph header in document closure using options"() {
+        given:
+        def headerFooterOptions = new HeaderFooterOptions(
+            pageNumber: 1,
+            pageCount: 2,
+            dateGenerated: OffsetDateTime.parse('2018-06-21T15:06Z')
+        )
+
+        when:
+        Document result = builder.create {
+            document {
+                header {info ->
+                    paragraph "Date Generated: ${info.dateGenerated.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)}"
+                }
+                paragraph 'Content'
+            }
+        }.document
+
+        then:
+        notThrown(Exception)
+
+        and:
+        result.header instanceof Closure
+        result.children.size() == 1
+
+        when:
+        BlockNode header = builder.buildHeaderNode(headerFooterOptions)
+
+        then:
+        header instanceof Paragraph
+        (header as Paragraph).text == 'Date Generated: 2018-06-21T15:06:00Z'
+
+    }
+
+    def "table header in document closure using options"() {
+        given:
+        def headerFooterOptions = new HeaderFooterOptions(
+            pageNumber: 1,
+            pageCount: 2,
+            dateGenerated: OffsetDateTime.parse('2018-06-21T15:06Z')
+        )
+
+        when:
+        Document result = builder.create {
+            document {
+                header {info ->
+                    table(border: [size: 0]) {
+                        row {
+                            cell "Date Generated: ${info.dateGenerated.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)}"
+                            cell "Page ${info.pageNumber} of ${info.pageCount}", align: 'right'
+                        }
+                    }
+                }
+                paragraph 'Content'
+            }
+        }.document
+
+        then:
+        notThrown(Exception)
+
+        and:
+        result.header instanceof Closure
+        result.children.size() == 1
+
+        when:
+        BlockNode header = builder.buildHeaderNode(headerFooterOptions)
+
+        then:
+        header instanceof Table
+
+        when:
+        Table table = header as Table
+
+        then:
+        table.rows.size() == 1
+        table.rows.first().numberOfColumns == 2
+
+        and:
+        table.rows.first().cells[0].children.size() == 1
+        table.rows.first().cells[0].children.first() instanceof Paragraph
+        (table.rows.first().cells[0].children.first() as Paragraph).text == 'Date Generated: 2018-06-21T15:06:00Z'
+        table.rows.first().cells[1].children.size() == 1
+        table.rows.first().cells[1].children.first() instanceof Paragraph
+        (table.rows.first().cells[1].children.first() as Paragraph).text == 'Page 1 of 2'
+        (table.rows.first().cells[1].children.first() as Paragraph).align == Align.RIGHT
+
+    }
+
+    def "simple paragraph footer in document map"() {
+        given:
+        def headerFooterOptions = new HeaderFooterOptions(
+            pageNumber: 1,
+            pageCount: 2,
+            dateGenerated: OffsetDateTime.parse('2018-06-21T15:06Z')
+        )
+
+        when:
+        Document result = builder.create {
+            document(footer: {
+                paragraph 'footer'
+            }) {
+                paragraph 'Content'
+            }
+        }.document
+
+        then:
+        notThrown(Exception)
+
+        and:
+        result.footer instanceof Closure
+        result.children.size() == 1
+
+        when:
+        BlockNode footer = builder.buildFooterNode(headerFooterOptions)
+
+        then:
+        footer instanceof Paragraph
+        (footer as Paragraph).text == 'footer'
+
+    }
+
+    def "simple paragraph footer in document closure"() {
+        given:
+        def headerFooterOptions = new HeaderFooterOptions(
+            pageNumber: 1,
+            pageCount: 2,
+            dateGenerated: OffsetDateTime.parse('2018-06-21T15:06Z')
+        )
+
+        when:
+        Document result = builder.create {
+            document {
+                footer {
+                    paragraph 'footer'
+                }
+                paragraph 'Content'
+            }
+        }.document
+
+        then:
+        notThrown(Exception)
+
+        and:
+        result.footer instanceof Closure
+        result.children.size() == 1
+
+        when:
+        BlockNode footer = builder.buildFooterNode(headerFooterOptions)
+
+        then:
+        footer instanceof Paragraph
+        (footer as Paragraph).text == 'footer'
+
+    }
+
+    def "paragraph footer in document closure using options"() {
+        given:
+        def headerFooterOptions = new HeaderFooterOptions(
+            pageNumber: 1,
+            pageCount: 2,
+            dateGenerated: OffsetDateTime.parse('2018-06-21T15:06Z')
+        )
+
+        when:
+        Document result = builder.create {
+            document {
+                footer {info ->
+                    paragraph "Date Generated: ${info.dateGenerated.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)}"
+                }
+                paragraph 'Content'
+            }
+        }.document
+
+        then:
+        notThrown(Exception)
+
+        and:
+        result.footer instanceof Closure
+        result.children.size() == 1
+
+        when:
+        BlockNode footer = builder.buildFooterNode(headerFooterOptions)
+
+        then:
+        footer instanceof Paragraph
+        (footer as Paragraph).text == 'Date Generated: 2018-06-21T15:06:00Z'
+
+    }
+
+    def "table footer in document closure using options"() {
+        given:
+        def headerFooterOptions = new HeaderFooterOptions(
+            pageNumber: 1,
+            pageCount: 2,
+            dateGenerated: OffsetDateTime.parse('2018-06-21T15:06Z')
+        )
+
+        when:
+        Document result = builder.create {
+            document {
+                footer {info ->
+                    table(border: [size: 0]) {
+                        row {
+                            cell "Date Generated: ${info.dateGenerated.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)}"
+                            cell "Page ${info.pageNumber} of ${info.pageCount}", align: 'right'
+                        }
+                    }
+                }
+                paragraph 'Content'
+            }
+        }.document
+
+        then:
+        notThrown(Exception)
+
+        and:
+        result.footer instanceof Closure
+        result.children.size() == 1
+
+        when:
+        BlockNode footer = builder.buildFooterNode(headerFooterOptions)
+
+        then:
+        footer instanceof Table
+
+        when:
+        Table table = footer as Table
+
+        then:
+        table.rows.size() == 1
+        table.rows.first().numberOfColumns == 2
+
+        and:
+        table.rows.first().cells[0].children.size() == 1
+        table.rows.first().cells[0].children.first() instanceof Paragraph
+        (table.rows.first().cells[0].children.first() as Paragraph).text == 'Date Generated: 2018-06-21T15:06:00Z'
+        table.rows.first().cells[1].children.size() == 1
+        table.rows.first().cells[1].children.first() instanceof Paragraph
+        (table.rows.first().cells[1].children.first() as Paragraph).text == 'Page 1 of 2'
+        (table.rows.first().cells[1].children.first() as Paragraph).align == Align.RIGHT
+
+    }
 }

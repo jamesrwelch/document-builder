@@ -1,9 +1,8 @@
 package com.craigburke.document.core.builder
 
-import com.craigburke.document.core.dom.PageBreak
-import com.craigburke.document.core.dom.attribute.TextBlockType
+import com.craigburke.document.core.dom.attribute.HeaderFooterOptions
+import com.craigburke.document.core.dom.block.BlockNode
 import com.craigburke.document.core.dom.block.Document
-import com.craigburke.document.core.dom.block.Table
 
 import com.craigburke.document.core.unit.UnitCategory
 
@@ -45,19 +44,18 @@ abstract class DocumentBuilder<T extends Document> {
         this
     }
 
-    @Deprecated
-    void addPageBreakToDocument(PageBreak pageBreak) {
-        // No-op
+    BlockNode buildHeaderNode(HeaderFooterOptions headerFooterOptions) {
+        use(UnitCategory) {
+            CreateApi createApi = new CreateApi(this)
+            createApi.header(headerFooterOptions, document.header)
+        }
     }
 
-    @Deprecated
-    void onTableComplete(Table table) {
-        //No-op
-    }
-
-    @Deprecated
-    void onTextBlockComplete(TextBlockType textBlockType) {
-        //No-op
+    BlockNode buildFooterNode(HeaderFooterOptions headerFooterOptions) {
+        use(UnitCategory) {
+            CreateApi createApi = new CreateApi(this)
+            createApi.footer(headerFooterOptions, document.footer)
+        }
     }
 }
 

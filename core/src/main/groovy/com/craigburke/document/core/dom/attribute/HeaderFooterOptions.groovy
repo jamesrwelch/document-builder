@@ -1,11 +1,13 @@
 package com.craigburke.document.core.dom.attribute
 
+import java.time.OffsetDateTime
+
 /**
  * Options for generated page headers and footers
  * @author Craig Burke
  */
 class HeaderFooterOptions {
-    Date dateGenerated
+    OffsetDateTime dateGenerated
     String pageCount
     String pageNumber
 }
