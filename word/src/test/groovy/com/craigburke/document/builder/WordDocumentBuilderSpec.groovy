@@ -17,4 +17,9 @@ class WordDocumentBuilderSpec extends BaseBuilderSpec {
     Document getDocument(byte[] data) {
         WordDocumentLoader.load(data)
     }
+
+    @Override
+    String getFileExtension() {
+        'docx'
+    }
 }

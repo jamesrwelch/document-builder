@@ -1,5 +1,7 @@
 package com.craigburke.document.builder
 
+import com.craigburke.document.core.dom.block.Document
+
 import groovy.xml.StreamingMarkupBuilder
 
 import java.util.zip.ZipEntry
@@ -9,7 +11,7 @@ import java.util.zip.ZipOutputStream
  * Helper class for writing document in OOXML format
  * @author Craig Burke
  */
-class WordDocument {
+class WordDocument extends Document {
     private static final String ROOT_RELATIONSHIP_FILE = '_rels/.rels'
     private static final String CONTENT_FOLDER = 'word'
     private static final String IMAGE_FOLDER = 'media'
@@ -28,7 +30,10 @@ class WordDocument {
     ZipOutputStream zipStream
     List<ContentTypeOverride> contentTypeOverrides = []
 
-    WordDocument(OutputStream out) {
+    WordDocument() {
+    }
+
+    void configureForWriting(OutputStream out) {
         documentParts[BasicDocumentPartTypes.ROOT.value] = new DocumentPart(type: BasicDocumentPartTypes.ROOT)
         documentParts[BasicDocumentPartTypes.DOCUMENT.value] = new DocumentPart(type: BasicDocumentPartTypes.DOCUMENT)
 
@@ -69,30 +74,30 @@ class WordDocument {
     void writeDocPropsFiles() {
 
         writeZipEntry 'docProps/app.xml',
-                'application/vnd.openxmlformats-officedocument.extended-properties+xml',
-                new StreamingMarkupBuilder().bind { builder ->
-            mkp.yieldUnescaped(XML_HEADER)
-            namespaces << ['': 'http://schemas.openxmlformats.org/officeDocument/2006/extended-properties']
-            Properties {
-                Application('Groovy Document Builder')
-            }
-        }
+                      'application/vnd.openxmlformats-officedocument.extended-properties+xml',
+                      new StreamingMarkupBuilder().bind {builder ->
+                          mkp.yieldUnescaped(XML_HEADER)
+                          namespaces << ['': 'http://schemas.openxmlformats.org/officeDocument/2006/extended-properties']
+                          Properties {
+                              Application('Groovy Document Builder')
+                          }
+                      } as Writable
 
         writeZipEntry 'docProps/core.xml',
-                'conteapplication/vnd.openxmlformats-package.core-properties+xml',
-                new StreamingMarkupBuilder().bind { builder ->
-            mkp.yieldUnescaped(XML_HEADER)
-            namespaces << [
-                    ''       : 'http://schemas.openxmlformats.org/package/2006/metadata/core-properties',
-                    'cp'     : 'http://schemas.openxmlformats.org/package/2006/metadata/core-properties',
-                    'dc'     : 'http://purl.org/dc/elements/1.1/',
-                    'dcterms': 'http://purl.org/dc/terms/',
-                    'xsi'    : 'http://www.w3.org/2001/XMLSchema-instance'
-            ]
-            coreProperties {
-                dc.creator('Groovy Document Builder')
-            }
-        }
+                      'conteapplication/vnd.openxmlformats-package.core-properties+xml',
+                      new StreamingMarkupBuilder().bind {builder ->
+                          mkp.yieldUnescaped(XML_HEADER)
+                          namespaces << [
+                              ''       : 'http://schemas.openxmlformats.org/package/2006/metadata/core-properties',
+                              'cp'     : 'http://schemas.openxmlformats.org/package/2006/metadata/core-properties',
+                              'dc'     : 'http://purl.org/dc/elements/1.1/',
+                              'dcterms': 'http://purl.org/dc/terms/',
+                              'xsi'    : 'http://www.w3.org/2001/XMLSchema-instance'
+                          ]
+                          coreProperties {
+                              dc.creator('Groovy Document Builder')
+                          }
+                      } as Writable
     }
 
     protected writeZipEntry(String filePath, String contentType = null, Writable writable) {
@@ -109,11 +114,11 @@ class WordDocument {
 
     def generateDocument(Closure documentClosure) {
         zipStream.putNextEntry(new ZipEntry("${CONTENT_FOLDER}/${BasicDocumentPartTypes.DOCUMENT.fileName}"))
-        zipStream << new StreamingMarkupBuilder().bind { builder ->
+        zipStream << new StreamingMarkupBuilder().bind {baseMarkupBuilderDocument ->
             mkp.yieldUnescaped(XML_HEADER)
             namespaces << DOCUMENT_NAMESPACES
-            documentClosure.delegate = builder
-            documentClosure(builder)
+            documentClosure.delegate = baseMarkupBuilderDocument
+            documentClosure(baseMarkupBuilderDocument)
 
         }.toString()
         zipStream.closeEntry()
