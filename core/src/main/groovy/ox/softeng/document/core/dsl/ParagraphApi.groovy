@@ -2,6 +2,7 @@ package ox.softeng.document.core.dsl
 
 import com.craigburke.document.core.dom.Image
 import com.craigburke.document.core.dom.LineBreak
+import com.craigburke.document.core.dom.attribute.Font
 import com.craigburke.document.core.dom.block.Paragraph
 
 import com.craigburke.document.core.builder.DocumentBuilder
@@ -24,6 +25,10 @@ class ParagraphApi implements Api {
     ParagraphApi(DocumentBuilder builder, Paragraph paragraph) {
         this(builder)
         this.paragraph = paragraph
+    }
+
+    Font getFont() {
+        paragraph.font
     }
 
     ParagraphApi text(Map attributes = [:], String text) {

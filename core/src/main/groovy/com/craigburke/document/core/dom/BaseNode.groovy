@@ -13,7 +13,7 @@ abstract class BaseNode<P extends BaseNode> implements ParentAware<P> {
     String name
 
     BaseNode() {
-        name = getClass().simpleName.toLowerCase()
+        name = Document.isAssignableFrom(getClass()) ? 'document' : getClass().simpleName.toLowerCase()
     }
 
     List<String> getTemplateKeys(String nodeKey) {
@@ -37,7 +37,7 @@ abstract class BaseNode<P extends BaseNode> implements ParentAware<P> {
         List<Map> nodeProperties = []
 
         templateKeys.each {String key ->
-            if (document.template && document.templateMap.containsKey(key)) {
+            if (document.templateMap.containsKey(key)) {
                 nodeProperties << document.templateMap[key]
             }
         }

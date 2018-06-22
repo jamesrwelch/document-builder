@@ -7,6 +7,7 @@ import com.craigburke.document.core.dom.block.Document
 import com.craigburke.document.core.unit.UnitCategory
 
 import ox.softeng.document.core.dsl.CreateApi
+import ox.softeng.document.core.dsl.DocumentApi
 
 /**
  * Document Builder base class
@@ -18,6 +19,9 @@ abstract class DocumentBuilder<T extends Document> {
     OutputStream out
     RenderState renderState = RenderState.PAGE
     List<String> imageFileNames = []
+    Closure headerClosure
+    Closure footerClosure
+    Map templateMap
 
     DocumentBuilder(OutputStream out) {
         this.out = out
@@ -46,16 +50,23 @@ abstract class DocumentBuilder<T extends Document> {
 
     BlockNode buildHeaderNode(HeaderFooterOptions headerFooterOptions) {
         use(UnitCategory) {
-            CreateApi createApi = new CreateApi(this)
-            createApi.header(headerFooterOptions, document.header)
+            buildNode(headerFooterOptions, headerClosure)
         }
     }
 
     BlockNode buildFooterNode(HeaderFooterOptions headerFooterOptions) {
         use(UnitCategory) {
-            CreateApi createApi = new CreateApi(this)
-            createApi.footer(headerFooterOptions, document.footer)
+            buildNode(headerFooterOptions, footerClosure)
         }
+    }
+
+    protected BlockNode buildNode(HeaderFooterOptions headerFooterOptions, Closure closure) {
+        HeaderFooterDocument document = new HeaderFooterDocument()
+        document.setNodeProperties([:])
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure.delegate = new DocumentApi(this, document)
+        closure.call(headerFooterOptions)
+        document.children.first() as BlockNode
     }
 }
 

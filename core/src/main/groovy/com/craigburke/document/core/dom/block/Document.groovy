@@ -25,17 +25,17 @@ abstract class Document extends BlockNode<Document, BaseNode> {
     BigDecimal height = inchToPoint(PaperSize.LETTER.height)
     String orientation = PORTRAIT
 
-    Closure template
-    Closure header
-    Closure footer
+    private Closure template
+    private Closure header
+    private Closure footer
 
-    private Map templateMap
+    Map templateMap
 
     private List<EmbeddedFont> embeddedFonts = []
 
     Map<String, Map> getTemplateMap() {
         if (templateMap == null) {
-            loadTemplateMap()
+            templateMap = loadTemplateMap()
         }
         templateMap
     }
@@ -44,16 +44,24 @@ abstract class Document extends BlockNode<Document, BaseNode> {
         return embeddedFonts
     }
 
-    private void loadTemplateMap() {
-        templateMap = [:]
-        if (template && template instanceof Closure) {
-            def templateDelegate = new Expando()
-            templateDelegate.metaClass.methodMissing = {name, args ->
-                templateMap[name] = args[0]
+    @Deprecated
+    protected Map loadTemplateMap() {
+        Map loadedTemplateMap = [:]
+        if (template) {
+            if (template instanceof Closure) {
+                Expando templateDelegate = new Expando()
+                templateDelegate.metaClass.methodMissing = {name, args ->
+                    setProperty(name, args)
+                }
+                template.resolveStrategy = Closure.DELEGATE_FIRST
+                template.delegate = templateDelegate
+                template.call()
+                loadedTemplateMap = templateDelegate.getProperties()
+            } else if (template instanceof Map) {
+                loadedTemplateMap = template
             }
-            template.delegate = templateDelegate
-            template()
         }
+        loadedTemplateMap
     }
 
     /**
@@ -128,5 +136,35 @@ abstract class Document extends BlockNode<Document, BaseNode> {
         nodeProperties.each {
             font << it.font
         }
+    }
+
+    @Deprecated
+    Closure getTemplate() {
+        return template
+    }
+
+    @Deprecated
+    void setTemplate(Closure template) {
+        this.template = template
+    }
+
+    @Deprecated
+    Closure getHeader() {
+        return header
+    }
+
+    @Deprecated
+    void setHeader(Closure header) {
+        this.header = header
+    }
+
+    @Deprecated
+    Closure getFooter() {
+        return footer
+    }
+
+    @Deprecated
+    void setFooter(Closure footer) {
+        this.footer = footer
     }
 }

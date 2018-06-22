@@ -158,57 +158,6 @@ class BuilderSpec extends Specification {
         embeddedFont.name == 'Open Sans'
     }
 
-    def "Text element shouldn't have children"() {
-        when:
-        builder.create {
-            document {
-                paragraph {
-                    text {
-                        text 'FOOBAR!'
-                    }
-                }
-
-            }
-        }
-
-        then:
-        thrown(Exception)
-    }
-
-    def "LineBreak element shouldn't have children"() {
-        when:
-        builder.create {
-            document {
-                paragraph {
-                    lineBreak {
-                        lineBreak()
-                    }
-                }
-
-            }
-        }
-
-        then:
-        thrown(Exception)
-    }
-
-    def "Image element shouldn't have children"() {
-        when:
-        builder.create {
-            document {
-                paragraph {
-                    image {
-                        image()
-                    }
-                }
-
-            }
-        }
-
-        then:
-        thrown(Exception)
-    }
-
     @Ignore
     def "Image can be loaded from URL using url method"() {
         when:
@@ -702,9 +651,41 @@ class BuilderSpec extends Specification {
 
         when:
         Document result = builder.create {
-            document(header: {
+            document(header: {paragraph 'HEADER'}) {
+                paragraph 'Content'
+            }
+        }.document
+
+        then:
+        notThrown(Exception)
+
+        and:
+        builder.headerClosure
+        result.children.size() == 1
+
+        when:
+        BlockNode header = builder.buildHeaderNode(headerFooterOptions)
+
+        then:
+        header instanceof Paragraph
+        (header as Paragraph).text == 'HEADER'
+
+    }
+
+    def "simple paragraph header in create closure"() {
+        given:
+        def headerFooterOptions = new HeaderFooterOptions(
+            pageNumber: 1,
+            pageCount: 2,
+            dateGenerated: OffsetDateTime.parse('2018-06-21T15:06Z')
+        )
+
+        when:
+        Document result = builder.create {
+            header {
                 paragraph 'HEADER'
-            }) {
+            }
+            document {
                 paragraph 'Content'
             }
         }.document
@@ -713,7 +694,7 @@ class BuilderSpec extends Specification {
         notThrown(Exception)
 
         and:
-        result.header instanceof Closure
+        builder.headerClosure
         result.children.size() == 1
 
         when:
@@ -725,7 +706,7 @@ class BuilderSpec extends Specification {
 
     }
 
-    def "simple paragraph header in document closure"() {
+    def "paragraph header in create closure using options"() {
         given:
         def headerFooterOptions = new HeaderFooterOptions(
             pageNumber: 1,
@@ -735,10 +716,10 @@ class BuilderSpec extends Specification {
 
         when:
         Document result = builder.create {
+            header {info ->
+                paragraph "Date Generated: ${info.dateGenerated.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)}"
+            }
             document {
-                header {
-                    paragraph 'HEADER'
-                }
                 paragraph 'Content'
             }
         }.document
@@ -747,41 +728,7 @@ class BuilderSpec extends Specification {
         notThrown(Exception)
 
         and:
-        result.header instanceof Closure
-        result.children.size() == 1
-
-        when:
-        BlockNode header = builder.buildHeaderNode(headerFooterOptions)
-
-        then:
-        header instanceof Paragraph
-        (header as Paragraph).text == 'HEADER'
-
-    }
-
-    def "paragraph header in document closure using options"() {
-        given:
-        def headerFooterOptions = new HeaderFooterOptions(
-            pageNumber: 1,
-            pageCount: 2,
-            dateGenerated: OffsetDateTime.parse('2018-06-21T15:06Z')
-        )
-
-        when:
-        Document result = builder.create {
-            document {
-                header {info ->
-                    paragraph "Date Generated: ${info.dateGenerated.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)}"
-                }
-                paragraph 'Content'
-            }
-        }.document
-
-        then:
-        notThrown(Exception)
-
-        and:
-        result.header instanceof Closure
+        builder.headerClosure
         result.children.size() == 1
 
         when:
@@ -793,7 +740,7 @@ class BuilderSpec extends Specification {
 
     }
 
-    def "table header in document closure using options"() {
+    def "table header in create closure using options"() {
         given:
         def headerFooterOptions = new HeaderFooterOptions(
             pageNumber: 1,
@@ -803,15 +750,15 @@ class BuilderSpec extends Specification {
 
         when:
         Document result = builder.create {
-            document {
-                header {info ->
-                    table(border: [size: 0]) {
-                        row {
-                            cell "Date Generated: ${info.dateGenerated.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)}"
-                            cell "Page ${info.pageNumber} of ${info.pageCount}", align: 'right'
-                        }
+            header {info ->
+                table(border: [size: 0]) {
+                    row {
+                        cell "Date Generated: ${info.dateGenerated.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)}"
+                        cell "Page ${info.pageNumber} of ${info.pageCount}", align: 'right'
                     }
                 }
+            }
+            document {
                 paragraph 'Content'
             }
         }.document
@@ -820,7 +767,7 @@ class BuilderSpec extends Specification {
         notThrown(Exception)
 
         and:
-        result.header instanceof Closure
+        builder.headerClosure
         result.children.size() == 1
 
         when:
@@ -868,7 +815,7 @@ class BuilderSpec extends Specification {
         notThrown(Exception)
 
         and:
-        result.footer instanceof Closure
+        builder.footerClosure
         result.children.size() == 1
 
         when:
@@ -880,7 +827,7 @@ class BuilderSpec extends Specification {
 
     }
 
-    def "simple paragraph footer in document closure"() {
+    def "simple paragraph footer in create closure"() {
         given:
         def headerFooterOptions = new HeaderFooterOptions(
             pageNumber: 1,
@@ -890,10 +837,10 @@ class BuilderSpec extends Specification {
 
         when:
         Document result = builder.create {
+            footer {
+                paragraph 'footer'
+            }
             document {
-                footer {
-                    paragraph 'footer'
-                }
                 paragraph 'Content'
             }
         }.document
@@ -902,7 +849,7 @@ class BuilderSpec extends Specification {
         notThrown(Exception)
 
         and:
-        result.footer instanceof Closure
+        builder.footerClosure
         result.children.size() == 1
 
         when:
@@ -914,7 +861,7 @@ class BuilderSpec extends Specification {
 
     }
 
-    def "paragraph footer in document closure using options"() {
+    def "paragraph footer in create closure using options"() {
         given:
         def headerFooterOptions = new HeaderFooterOptions(
             pageNumber: 1,
@@ -924,10 +871,11 @@ class BuilderSpec extends Specification {
 
         when:
         Document result = builder.create {
+            footer {info ->
+                paragraph "Date Generated: ${info.dateGenerated.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)}"
+            }
             document {
-                footer {info ->
-                    paragraph "Date Generated: ${info.dateGenerated.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)}"
-                }
+
                 paragraph 'Content'
             }
         }.document
@@ -936,7 +884,7 @@ class BuilderSpec extends Specification {
         notThrown(Exception)
 
         and:
-        result.footer instanceof Closure
+        builder.footerClosure
         result.children.size() == 1
 
         when:
@@ -958,15 +906,15 @@ class BuilderSpec extends Specification {
 
         when:
         Document result = builder.create {
-            document {
-                footer {info ->
-                    table(border: [size: 0]) {
-                        row {
-                            cell "Date Generated: ${info.dateGenerated.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)}"
-                            cell "Page ${info.pageNumber} of ${info.pageCount}", align: 'right'
-                        }
+            footer {info ->
+                table(border: [size: 0]) {
+                    row {
+                        cell "Date Generated: ${info.dateGenerated.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)}"
+                        cell "Page ${info.pageNumber} of ${info.pageCount}", align: 'right'
                     }
                 }
+            }
+            document {
                 paragraph 'Content'
             }
         }.document
@@ -975,7 +923,7 @@ class BuilderSpec extends Specification {
         notThrown(Exception)
 
         and:
-        result.footer instanceof Closure
+        builder.footerClosure
         result.children.size() == 1
 
         when:
@@ -1001,4 +949,165 @@ class BuilderSpec extends Specification {
         (table.rows.first().cells[1].children.first() as Paragraph).align == Align.RIGHT
 
     }
+
+    def "create document with header and footer"() {
+        given:
+        def headerFooterOptions = new HeaderFooterOptions(
+            pageNumber: 1,
+            pageCount: 2,
+            dateGenerated: OffsetDateTime.parse('2018-06-21T15:06Z')
+        )
+
+        when:
+        Document result = builder.create {
+            header {info ->
+                paragraph "Date Generated: ${info.dateGenerated.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)}"
+            }
+            footer {info ->
+                table(border: [size: 0]) {
+                    row {
+                        cell "Date Generated: ${info.dateGenerated.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)}"
+                        cell "Page ${info.pageNumber} of ${info.pageCount}", align: 'right'
+                    }
+                }
+            }
+            document {
+                paragraph 'Content'
+            }
+        }.document
+
+        then:
+        notThrown(Exception)
+
+        and:
+        builder.headerClosure
+        result.children.size() == 1
+
+        when:
+        BlockNode header = builder.buildHeaderNode(headerFooterOptions)
+
+        then:
+        header instanceof Paragraph
+        (header as Paragraph).text == 'Date Generated: 2018-06-21T15:06:00Z'
+
+        and:
+        builder.footerClosure
+        result.children.size() == 1
+
+        when:
+        BlockNode footer = builder.buildFooterNode(headerFooterOptions)
+
+        then:
+        footer instanceof Table
+
+        when:
+        Table table = footer as Table
+
+        then:
+        table.rows.size() == 1
+        table.rows.first().numberOfColumns == 2
+
+        and:
+        table.rows.first().cells[0].children.size() == 1
+        table.rows.first().cells[0].children.first() instanceof Paragraph
+        (table.rows.first().cells[0].children.first() as Paragraph).text == 'Date Generated: 2018-06-21T15:06:00Z'
+        table.rows.first().cells[1].children.size() == 1
+        table.rows.first().cells[1].children.first() instanceof Paragraph
+        (table.rows.first().cells[1].children.first() as Paragraph).text == 'Page 1 of 2'
+        (table.rows.first().cells[1].children.first() as Paragraph).align == Align.RIGHT
+
+    }
+
+    void 'define global template in attributes as closure'() {
+        given:
+        def customTemplate = {
+            'document' font: [family: 'Helvetica', size: 13.pt], margin: [top: 1.5.inches]
+            'paragraph' font: [color: '#333333']
+            'paragraph.myStyle' font: [bold: true]
+        }
+
+        when:
+        Document result = builder.create {
+            document(template: customTemplate) {
+                paragraph 'Hello'
+                paragraph 'Paragraph with style applied', style: 'myStyle'
+            }
+        }.document
+        Paragraph p1 = (result.children[0] as Paragraph)
+        Paragraph p2 = (result.children[1] as Paragraph)
+
+        then:
+        result.font.family == 'Helvetica'
+        result.font.size == 13
+        result.margin.top == 108 // inches
+        result.margin.bottom == 72
+        result.margin.left == 72
+        result.margin.right == 72
+
+        and:
+        p1.font.family == 'Helvetica'
+        p1.font.size == 13
+        p1.font.color.hex == '333333'
+
+        and:
+        p2.font.family == 'Helvetica'
+        p2.font.size == 13
+        p2.font.color.hex == '333333'
+        p2.font.bold
+    }
+
+    void 'define global template as closure in create'() {
+        when:
+        Document result = builder.create {
+            template {
+                document font: [family: 'Helvetica', size: 13.pt], margin: [top: 1.5.inches]
+                paragraph font: [color: '#333333']
+                'paragraph.myStyle' font: [bold: true]
+            }
+            document {
+                paragraph 'Hello'
+                paragraph 'Paragraph with style applied', style: 'myStyle'
+            }
+        }.document
+        Paragraph p1 = (result.children[0] as Paragraph)
+        Paragraph p2 = (result.children[1] as Paragraph)
+
+        then:
+        result.font.family == 'Helvetica'
+        result.font.size == 13
+        result.margin.top == 108 // inches
+        result.margin.bottom == 72
+        result.margin.left == 72
+        result.margin.right == 72
+
+        and:
+        p1.font.family == 'Helvetica'
+        p1.font.size == 13
+        p1.font.color.hex == '333333'
+
+        and:
+        p2.font.family == 'Helvetica'
+        p2.font.size == 13
+        p2.font.color.hex == '333333'
+        p2.font.bold
+    }
+
+    void 'define global template as closure in create after document defined'() {
+        when:
+        builder.create {
+            document {
+                paragraph 'Hello'
+                paragraph 'Paragraph with style applied', style: 'myStyle'
+            }
+            template {
+                document font: [family: 'Helvetica', size: 13.pt], margin: [top: 1.5.inches]
+                paragraph font: [color: '#333333']
+                'paragraph.myStyle' font: [bold: true]
+            }
+        }
+
+        then:
+        thrown(IllegalStateException)
+    }
+
 }

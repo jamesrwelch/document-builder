@@ -1,11 +1,8 @@
 package ox.softeng.document.core.dsl
 
-import com.craigburke.document.core.dom.attribute.HeaderFooterOptions
-import com.craigburke.document.core.dom.block.BlockNode
 import com.craigburke.document.core.dom.block.Document
 
 import com.craigburke.document.core.builder.DocumentBuilder
-import com.craigburke.document.core.builder.HeaderFooterDocument
 
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
@@ -28,7 +25,13 @@ class CreateApi implements Api {
     CreateApi document(Map<String, Object> attributes = [:],
                        @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DocumentApi) Closure closure = null) {
         try {
+            // The following should be defined before the document is actually created
+            if (attributes.header) header attributes.remove('header') as Closure
+            if (attributes.footer) footer attributes.remove('footer') as Closure
+            if (attributes.template) template attributes.remove('template') as Closure
+
             Document document = builder.createDocument(attributes)
+            document.templateMap = builder.templateMap ?: [:]
             document.setNodeProperties(attributes)
 
             callClosure closure, new DocumentApi(builder, document)
@@ -40,25 +43,24 @@ class CreateApi implements Api {
         this
     }
 
-    BlockNode header(HeaderFooterOptions headerFooterOptions,
-                     @ClosureParams(value = SimpleType, options = 'com.craigburke.document.core.dom.attribute.HeaderFooterOptions')
-                     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DocumentApi) Closure closure) {
-        HeaderFooterDocument document = new HeaderFooterDocument()
-        document.setNodeProperties([:])
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        closure.delegate = new DocumentApi(builder, document)
-        closure.call(headerFooterOptions)
-        document.children.first() as BlockNode
+    CreateApi template(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = TemplateApi) Closure closure) {
+        if (builder.document) throw new IllegalStateException('Cannot define global template after document is defined')
+        TemplateApi templateApi = new TemplateApi()
+        callClosure(closure, templateApi)
+        builder.templateMap = templateApi.templateMap
+        this
+
     }
 
-    BlockNode footer(HeaderFooterOptions headerFooterOptions,
-                     @ClosureParams(value = SimpleType, options = 'com.craigburke.document.core.dom.attribute.HeaderFooterOptions')
+    CreateApi header(@ClosureParams(value = SimpleType, options = 'com.craigburke.document.core.dom.attribute.HeaderFooterOptions')
                      @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DocumentApi) Closure closure) {
-        HeaderFooterDocument document = new HeaderFooterDocument()
-        document.setNodeProperties([:])
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        closure.delegate = new DocumentApi(builder, document)
-        closure.call(headerFooterOptions)
-        document.children.first() as BlockNode
+        builder.headerClosure = closure
+        this
+    }
+
+    CreateApi footer(@ClosureParams(value = SimpleType, options = 'com.craigburke.document.core.dom.attribute.HeaderFooterOptions')
+                     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DocumentApi) Closure closure) {
+        builder.footerClosure = closure
+        this
     }
 }
