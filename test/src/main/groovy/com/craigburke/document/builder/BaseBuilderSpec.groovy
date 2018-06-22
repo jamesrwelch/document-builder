@@ -8,6 +8,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.time.format.DateTimeFormatter
+
 /**
  * Base class for individual builder tests
  * @author Craig Burke
@@ -35,6 +37,8 @@ abstract class BaseBuilderSpec extends Specification {
     abstract DocumentBuilder getBuilderInstance(OutputStream out)
 
     abstract Document getDocument(byte[] data)
+
+    abstract String getFileExtension()
 
     def setup() {
         out = new ByteArrayOutputStream()
@@ -232,7 +236,9 @@ abstract class BaseBuilderSpec extends Specification {
     def "paragraph header"() {
         when:
         builder.create {
-            document(header: {paragraph 'HEADER'}) {
+            document(header: {
+                paragraph 'HEADER'
+            }) {
                 paragraph 'Content'
             }
         }
@@ -337,6 +343,217 @@ abstract class BaseBuilderSpec extends Specification {
 
         then:
         notThrown(Exception)
+    }
+
+
+    void 'test outputting word document'() {
+        given:
+        File testFile = new File("full_test.${getFileExtension()}")
+        if (testFile.exists()) testFile.delete()
+
+        expect:
+        !testFile.exists()
+
+        when:
+        DocumentBuilder builder = getBuilderInstance(new FileOutputStream(testFile))
+
+        String[] COLORS = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#8B00FF']
+
+        builder.create {
+            header {info ->
+                paragraph 'Author: Spock'
+            }
+            footer {info ->
+                table(border: [size: 0]) {
+                    row {
+                        cell "Date Generated: ${info.dateGenerated.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)}"
+                        cell "Page ${info.pageNumber} of ${info.pageCount}", align: 'right'
+                    }
+                }
+            }
+            document(font: [family: 'Helvetica', size: 14.pt], margin: [top: 0.75.inches], pageCount: 3) {
+
+                heading1 "Groovy Document Builder v.0.5.0", font: [color: '#990000', size: 22.pt]
+
+                heading2 "Paragraphs"
+
+                paragraph {
+                    font.size = 42.pt
+                    "Hello World".eachWithIndex {letter, index ->
+                        font.color = COLORS[index % COLORS.size()]
+                        text letter
+                        font.size--
+                    }
+                    lineBreak()
+                    text "Current font size is ${font.size}pt"
+                }
+
+                paragraph "Back to default font and aligned to the right", align: 'right'
+
+                paragraph(margin: [left: 1.25.inches, right: 1.inch, top: 0.25.inches, bottom: 0.25.inches]) {
+                    font << [family: 'Times-Roman', bold: true, italic: true, color: '#333333']
+                    text "A paragraph with a different font and margins"
+                }
+
+                heading3 'Images'
+
+                paragraph(align: 'center') {
+                    image(data: imageData, width: 250.px, height: 125.px)
+                    lineBreak()
+                    text "Figure 1: Groovy Logo", font: [italic: true, size: 9.pt]
+                }
+
+                heading3 'Text stuff'
+
+                paragraph 'Paragraph 1'
+                paragraph {
+                    text 'Paragraph '
+                    text '2', font: [bold: true, size: 22.pt, color: '#FF0000']
+                }
+
+                heading3 'Styles'
+
+                paragraph(font: [family: 'Courier', size: 12.pt]) {
+                    text 'Paragraph text with '
+                    text 'custom styles', font: [color: '#FF0000']
+                }
+
+                paragraph 'Default style'
+
+                pageBreak()
+
+                heading2 "Tables"
+
+                table(width: 6.inches, padding: 4.px, border: [size: 3.px, color: '#990000']) {
+                    row {
+                        cell('Left Aligned', width: 1.5.inches, align: 'left')
+                        cell('Center Aligned', width: 2.inches, align: 'center')
+                        cell(align: 'right') {
+                            text 'Right Aligned'
+                        }
+                    }
+                }
+
+                table {
+                    row {
+                        cell 'Cell1'
+                        cell {
+                            text 'Cell2'
+                        }
+                    }
+                }
+
+                heading3 'Padding'
+
+                table(width: 6.inches, padding: 20.px, border: [size: 3.px, color: '#FF0000']) {
+                    row {
+                        cell 'Cell1'
+                        cell 'Cell2', align: 'right'
+                    }
+                }
+
+                heading3 'Column widths'
+
+                table(columns: [1, 2, 3]) {
+                    row {
+                        cell 'Cell1-1'
+                        cell 'Cell1-1'
+                        cell 'Cell1-3'
+                    }
+                }
+
+                heading3 'Backgrounds'
+
+                table(background: '#6495ED') {
+                    row {
+                        cell 'Cell1-1'
+                        cell 'Cell1-1'
+                    }
+                    row(background: '#FFFFFF') {
+                        cell 'Cell2-1'
+                        cell 'Cell2-2'
+                    }
+                    row {
+                        cell 'Cell3-1', background: '#FFD700'
+                        cell 'Cell3-2'
+                    }
+                }
+
+                heading3 'Column Spanning'
+
+                table(background: '#6495ED') {
+                    row {
+                        cell 'Cell1-1'
+                        cell 'Cell1-1'
+                    }
+                    row(background: '#FFFFFF') {
+                        cell 'Cell2-1'
+                        cell 'Cell2-2'
+                    }
+                    row {
+                        cell 'Cell3-1', background: '#FFD700'
+                        cell 'Cell3-2'
+                    }
+                }
+
+                heading3 'Row spanning'
+
+                table {
+                    row {
+                        cell 'Cell1-1', rowspan: 2
+                        cell 'Cell1-2'
+                        cell 'Cell1-3'
+                    }
+                    row {
+                        cell 'Cell2-1'
+                        cell 'Cell2-2'
+                    }
+                    row {
+                        cell 'Cell3-1'
+                        cell 'Cell3-2'
+                        cell 'Cell3-3'
+                    }
+                }
+
+                heading3 'Table in table'
+
+                table {
+                    row {
+                        cell {
+                            text 'Cell1-1'
+                        }
+                        cell {
+                            table {
+                                row {
+                                    cell 'INNER-1'
+                                    cell 'INNER-2'
+                                }
+                            }
+                        }
+                    }
+                    row {
+                        cell 'Cell2-1'
+                        cell 'Cell2-2'
+                    }
+                }
+
+                pageBreak()
+
+                heading2 '1.1 First Section', font: [color: '#333333']
+                paragraph 'First section content'
+
+                heading3 '1.1.1 Subsection'
+                heading4 '1.1.1.1 Subsection'
+                heading5 '1.1.1.1.1 Subsection'
+                heading6 '1.1.1.1.1.1 Subsection'
+
+                heading2 '1.2 Second Section'
+            }
+        }
+
+        then:
+        noExceptionThrown()
+        testFile.exists()
     }
 
 }
