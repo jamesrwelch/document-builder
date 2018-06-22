@@ -346,7 +346,7 @@ abstract class BaseBuilderSpec extends Specification {
     }
 
 
-    void 'test outputting word document'() {
+    void 'test outputting document'() {
         given:
         File testFile = new File("full_test.${getFileExtension()}")
         if (testFile.exists()) testFile.delete()
@@ -371,93 +371,115 @@ abstract class BaseBuilderSpec extends Specification {
                     }
                 }
             }
-            document(font: [family: 'Helvetica', size: 14.pt], margin: [top: 0.75.inches], pageCount: 3) {
+            template {
+                heading(font: [underline: true])
+            }
+            document(font: [family: 'Helvetica', size: 14.pt], margin: [top: 0.75.inches], pageCount: 8) {
 
                 heading1 "Groovy Document Builder v.0.5.0", font: [color: '#990000', size: 22.pt]
 
                 heading2 "Paragraphs"
 
-                paragraph {
-                    font.size = 42.pt
-                    "Hello World".eachWithIndex {letter, index ->
-                        font.color = COLORS[index % COLORS.size()]
-                        text letter
-                        font.size--
+                section {
+                    heading3('Fancy colours and sizing')
+                    paragraph {
+                        font.size = 42.pt
+                        "Hello World".eachWithIndex {letter, index ->
+                            font.color = COLORS[index % COLORS.size()]
+                            text letter
+                            font.size--
+                        }
+                        lineBreak()
+                        text "Current font size is ${font.size}pt"
                     }
-                    lineBreak()
-                    text "Current font size is ${font.size}pt"
+
+                    paragraph "Back to default font and aligned to the right", align: 'right'
+
+                    paragraph(margin: [left: 1.25.inches, right: 1.inch, top: 0.25.inches, bottom: 0.25.inches]) {
+                        font << [family: 'Times-Roman', bold: true, italic: true, color: '#333333']
+                        text "A paragraph with a different font and margins"
+                    }
+                }
+                section {
+                    heading3 'Images'
+
+                    paragraph(align: 'center') {
+                        image(data: imageData, width: 250.px, height: 125.px)
+                        lineBreak()
+                        text "Figure 1: Groovy Logo", font: [italic: true, size: 9.pt]
+                    }
                 }
 
-                paragraph "Back to default font and aligned to the right", align: 'right'
+                section {
+                    heading3 'Text play inside paragraphs'
 
-                paragraph(margin: [left: 1.25.inches, right: 1.inch, top: 0.25.inches, bottom: 0.25.inches]) {
-                    font << [family: 'Times-Roman', bold: true, italic: true, color: '#333333']
-                    text "A paragraph with a different font and margins"
+                    paragraph 'Paragraph 1'
+                    paragraph {
+                        text 'Paragraph '
+                        text '2', font: [bold: true, size: 22.pt, color: '#FF0000']
+                    }
                 }
 
-                heading3 'Images'
+                section {
+                    heading3 'Styles'
 
-                paragraph(align: 'center') {
-                    image(data: imageData, width: 250.px, height: 125.px)
-                    lineBreak()
-                    text "Figure 1: Groovy Logo", font: [italic: true, size: 9.pt]
+                    paragraph(font: [family: 'Courier', size: 12.pt]) {
+                        text 'Paragraph text with '
+                        text 'custom styles', font: [color: '#FF0000']
+                    }
+
+                    paragraph 'Default style'
                 }
-
-                heading3 'Text stuff'
-
-                paragraph 'Paragraph 1'
-                paragraph {
-                    text 'Paragraph '
-                    text '2', font: [bold: true, size: 22.pt, color: '#FF0000']
-                }
-
-                heading3 'Styles'
-
-                paragraph(font: [family: 'Courier', size: 12.pt]) {
-                    text 'Paragraph text with '
-                    text 'custom styles', font: [color: '#FF0000']
-                }
-
-                paragraph 'Default style'
 
                 pageBreak()
 
                 heading2 "Tables"
 
-                table(width: 6.inches, padding: 4.px, border: [size: 3.px, color: '#990000']) {
-                    row {
-                        cell('Left Aligned', width: 1.5.inches, align: 'left')
-                        cell('Center Aligned', width: 2.inches, align: 'center')
-                        cell(align: 'right') {
-                            text 'Right Aligned'
+                section {
+                    heading3 'Alignment, Play and Padding', font: [italic: true]
+
+                    section {
+                        heading4 'Alignment'
+                        table(width: 6.inches, padding: 4.px, border: [size: 3.px, color: '#990000']) {
+                            row {
+                                cell('Left Aligned', width: 1.5.inches, align: 'left')
+                                cell('Center Aligned', width: 2.inches, align: 'center')
+                                cell(align: 'right') {
+                                    text 'Right Aligned'
+                                }
+                            }
+                        }
+
+                    }
+                    heading4 'Text Play'
+                    table {
+                        row {
+                            cell 'Cell1'
+                            cell {
+                                text 'Cell'
+                                text '2'
+                            }
                         }
                     }
-                }
 
-                table {
-                    row {
-                        cell 'Cell1'
-                        cell {
-                            text 'Cell2'
+                    heading4 'Padding'
+
+                    table(width: 6.inches, padding: 20.px, border: [size: 3.px, color: '#FF0000']) {
+                        row {
+                            cell 'Cell1'
+                            cell 'Cell2', align: 'right'
                         }
                     }
-                }
 
-                heading3 'Padding'
-
-                table(width: 6.inches, padding: 20.px, border: [size: 3.px, color: '#FF0000']) {
-                    row {
-                        cell 'Cell1'
-                        cell 'Cell2', align: 'right'
-                    }
                 }
+                pageBreak()
 
                 heading3 'Column widths'
 
                 table(columns: [1, 2, 3]) {
                     row {
                         cell 'Cell1-1'
-                        cell 'Cell1-1'
+                        cell 'Cell1-2'
                         cell 'Cell1-3'
                     }
                 }
@@ -479,44 +501,50 @@ abstract class BaseBuilderSpec extends Specification {
                     }
                 }
 
-                heading3 'Column Spanning'
+                pageBreak()
 
-                table(background: '#6495ED') {
-                    row {
-                        cell 'Cell1-1'
-                        cell 'Cell1-1'
+                section {
+                    heading3 'Spanning', font: [italic: true]
+                    heading4 'Column Spanning'
+
+                    table {
+                        row {
+                            cell 'Cell1', colspan: 2
+                            cell 'Cell1-2'
+                        }
+                        row {
+                            cell 'Cell2-1'
+                            cell 'Cell2-2'
+                            cell 'Cell2-3'
+                        }
                     }
-                    row(background: '#FFFFFF') {
-                        cell 'Cell2-1'
-                        cell 'Cell2-2'
+
+                    heading4 'Row spanning'
+
+                    table {
+                        row {
+                            cell 'Cell1-1', rowspan: 2
+                            cell 'Cell1-2'
+                            cell 'Cell1-3'
+                        }
+                        row {
+                            cell 'Cell2-1'
+                            cell 'Cell2-2'
+                        }
+                        row {
+                            cell 'Cell3-1'
+                            cell 'Cell3-2'
+                            cell 'Cell3-3'
+                        }
                     }
-                    row {
-                        cell 'Cell3-1', background: '#FFD700'
-                        cell 'Cell3-2'
-                    }
+
                 }
 
-                heading3 'Row spanning'
+                pageBreak()
 
-                table {
-                    row {
-                        cell 'Cell1-1', rowspan: 2
-                        cell 'Cell1-2'
-                        cell 'Cell1-3'
-                    }
-                    row {
-                        cell 'Cell2-1'
-                        cell 'Cell2-2'
-                    }
-                    row {
-                        cell 'Cell3-1'
-                        cell 'Cell3-2'
-                        cell 'Cell3-3'
-                    }
-                }
+                heading3 'Tables in table', font: [italic: true]
 
-                heading3 'Table in table'
-
+                heading4 'Simple'
                 table {
                     row {
                         cell {
@@ -537,17 +565,103 @@ abstract class BaseBuilderSpec extends Specification {
                     }
                 }
 
+                heading4 'Complex'
+                table(columns: [1, 2]) {
+                    row {
+                        cell {
+                            text 'Backgrounds'
+                        }
+                        cell {
+                            table(background: '#6495ED') {
+                                row {
+                                    cell 'Cell1-1'
+                                    cell 'Cell1-1'
+                                }
+                                row(background: '#FFFFFF') {
+                                    cell 'Cell2-1'
+                                    cell 'Cell2-2'
+                                }
+                                row {
+                                    cell 'Cell3-1', background: '#FFD700'
+                                    cell 'Cell3-2'
+                                }
+                            }
+                        }
+                    }
+                    row {
+                        cell 'Single entry'
+                        cell 'Some text', font: [bold: true]
+                    }
+
+                    row {
+                        cell 'Row spanning'
+                        cell {
+                            table {
+                                row {
+                                    cell 'Cell1-1', rowspan: 2
+                                    cell 'Cell1-2'
+                                    cell 'Cell1-3'
+                                }
+                                row {
+                                    cell 'Cell2-1'
+                                    cell 'Cell2-2'
+                                }
+                                row {
+                                    cell 'Cell3-1'
+                                    cell 'Cell3-2'
+                                    cell 'Cell3-3'
+                                }
+                            }
+                        }
+                    }
+                    row {
+                        cell 'Column Widths'
+                        cell {
+                            table(columns: [1, 2, 3]) {
+                                row {
+                                    cell 'Cell1-1'
+                                    cell 'Cell1-2'
+                                    cell 'Cell1-3'
+                                }
+                            }
+                        }
+                    }
+                    row {
+                        cell 'Column Spanning'
+                        cell {
+                            table {
+                                row {
+                                    cell 'Cell1', colspan: 2
+                                    cell 'Cell1-2'
+                                }
+                                row {
+                                    cell 'Cell2-1'
+                                    cell 'Cell2-2'
+                                    cell 'Cell2-3'
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+
+
                 pageBreak()
 
-                heading2 '1.1 First Section', font: [color: '#333333']
-                paragraph 'First section content'
+                heading2 'Headings Play'
 
-                heading3 '1.1.1 Subsection'
-                heading4 '1.1.1.1 Subsection'
-                heading5 '1.1.1.1.1 Subsection'
-                heading6 '1.1.1.1.1.1 Subsection'
+                section {
+                    heading2 '1.1 First Section', font: [color: '#333333']
+                    paragraph 'First section content'
 
-                heading2 '1.2 Second Section'
+                    heading3 '1.1.1 Subsection'
+                    heading4 '1.1.1.1 Subsection'
+                    heading5 '1.1.1.1.1 Subsection'
+                    heading6 '1.1.1.1.1.1 Subsection'
+
+                    heading2 '1.2 Second Section'
+                }
             }
         }
 
