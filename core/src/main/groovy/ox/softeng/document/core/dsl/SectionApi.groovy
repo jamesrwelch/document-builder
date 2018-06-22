@@ -11,7 +11,7 @@ import com.craigburke.document.core.builder.DocumentBuilder
 /**
  * @since 31/05/2018
  */
-class SectionApi {
+class SectionApi implements Api {
 
     DocumentBuilder builder
     Document document
@@ -19,6 +19,10 @@ class SectionApi {
     SectionApi(DocumentBuilder builder, Document document) {
         this.document = document
         this.builder = builder
+    }
+
+    SectionApi section(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SectionApi) Closure closure) {
+        callClosure(closure, this)
     }
 
     SectionApi paragraph(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ParagraphApi) Closure closure) {

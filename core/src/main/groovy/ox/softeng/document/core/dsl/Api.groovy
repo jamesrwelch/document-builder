@@ -9,9 +9,9 @@ trait Api {
 
     abstract DocumentBuilder getBuilder()
 
-    void callClosure(Closure closure, def delegate) {
+    void callClosure(Closure closure, def delegate, int resolveStrategy = Closure.DELEGATE_FIRST) {
         if (closure) {
-            closure.resolveStrategy = Closure.DELEGATE_FIRST
+            closure.resolveStrategy = resolveStrategy
             closure.delegate = delegate
             closure.call()
         }

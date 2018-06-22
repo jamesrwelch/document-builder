@@ -36,6 +36,8 @@ class CreateApi implements Api {
 
             callClosure closure, new DocumentApi(builder, document)
 
+            builder.checkPageCount()
+
             builder.writeDocument()
         } finally {
             builder.close()
@@ -43,10 +45,10 @@ class CreateApi implements Api {
         this
     }
 
-    CreateApi template(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = TemplateApi) Closure closure) {
+    CreateApi template(@DelegatesTo(strategy = Closure.DELEGATE_ONLY, value = TemplateApi) Closure closure) {
         if (builder.document) throw new IllegalStateException('Cannot define global template after document is defined')
         TemplateApi templateApi = new TemplateApi()
-        callClosure(closure, templateApi)
+        callClosure(closure, templateApi, Closure.DELEGATE_ONLY)
         builder.templateMap = templateApi.templateMap
         this
 

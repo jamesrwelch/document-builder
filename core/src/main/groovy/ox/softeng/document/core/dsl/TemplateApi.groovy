@@ -27,32 +27,32 @@ class TemplateApi {
         methodMissing('cell', attributes)
     }
 
-    TemplateApi header(Map attributes) {
-        methodMissing('header', attributes)
+    TemplateApi heading(Map attributes) {
+        methodMissing('heading', attributes)
     }
 
-    TemplateApi header1(Map attributes) {
-        methodMissing('header1', attributes)
+    TemplateApi heading1(Map attributes) {
+        methodMissing('heading1', attributes)
     }
 
-    TemplateApi header2(Map attributes) {
-        methodMissing('header2', attributes)
+    TemplateApi heading2(Map attributes) {
+        methodMissing('heading2', attributes)
     }
 
-    TemplateApi header3(Map attributes) {
-        methodMissing('header3', attributes)
+    TemplateApi heading3(Map attributes) {
+        methodMissing('heading3', attributes)
     }
 
-    TemplateApi header4(Map attributes) {
-        methodMissing('header4', attributes)
+    TemplateApi heading4(Map attributes) {
+        methodMissing('heading4', attributes)
     }
 
-    TemplateApi header5(Map attributes) {
-        methodMissing('header5', attributes)
+    TemplateApi heading5(Map attributes) {
+        methodMissing('heading5', attributes)
     }
 
-    TemplateApi header6(Map attributes) {
-        methodMissing('header6', attributes)
+    TemplateApi heading6(Map attributes) {
+        methodMissing('heading6', attributes)
     }
 
     TemplateApi text(Map attributes) {

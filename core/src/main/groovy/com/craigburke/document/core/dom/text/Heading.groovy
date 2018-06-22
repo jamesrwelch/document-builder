@@ -41,4 +41,13 @@ class Heading extends TextNode<Document> implements MarginAssignable, TextBlockT
     Margin getDefaultMargin() {
         DEFAULT_MARGIN
     }
+
+    @Override
+    void setNodeProperties(List<Map> nodePropertiesMap) {
+        super.setNodeProperties(nodePropertiesMap)
+        margin = defaultMargin.clone()
+        nodePropertiesMap.each {
+            margin << it.margin
+        }
+    }
 }

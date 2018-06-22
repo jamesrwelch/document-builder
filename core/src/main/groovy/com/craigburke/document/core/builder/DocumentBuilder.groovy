@@ -1,5 +1,6 @@
 package com.craigburke.document.core.builder
 
+import com.craigburke.document.core.dom.PageBreak
 import com.craigburke.document.core.dom.attribute.HeaderFooterOptions
 import com.craigburke.document.core.dom.block.BlockNode
 import com.craigburke.document.core.dom.block.Document
@@ -58,6 +59,11 @@ abstract class DocumentBuilder<T extends Document> {
         use(UnitCategory) {
             buildNode(headerFooterOptions, footerClosure)
         }
+    }
+
+    void checkPageCount() {
+        Integer numberOfPageBreaks = (Integer) document.children.count {it instanceof PageBreak}
+        document.pageCount = Math.max(numberOfPageBreaks + 1, document.pageCount ?: 0)
     }
 
     protected BlockNode buildNode(HeaderFooterOptions headerFooterOptions, Closure closure) {
