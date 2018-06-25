@@ -2,6 +2,7 @@ package com.craigburke.document.builder
 
 import com.craigburke.document.core.dom.block.Document
 
+import com.craigburke.document.builder.util.PdfDocumentLoader
 import com.craigburke.document.core.builder.DocumentBuilder
 
 /**
@@ -18,4 +19,8 @@ class PdfDocumentBuilderSpec extends BaseBuilderSpec {
         PdfDocumentLoader.load(data)
     }
 
+    @Override
+    String getFileExtension() {
+        'pdf'
+    }
 }

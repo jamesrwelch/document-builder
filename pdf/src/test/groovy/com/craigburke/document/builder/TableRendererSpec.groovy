@@ -3,12 +3,13 @@ package com.craigburke.document.builder
 import com.craigburke.document.core.dom.attribute.Font
 import com.craigburke.document.core.dom.attribute.Margin
 import com.craigburke.document.core.dom.block.Document
+import com.craigburke.document.core.dom.block.Paragraph
 import com.craigburke.document.core.dom.block.Table
 import com.craigburke.document.core.dom.block.table.Cell
 import com.craigburke.document.core.dom.block.table.Row
-import com.craigburke.document.core.dom.block.text.TextBlock
 
 import com.craigburke.document.builder.render.TableRenderer
+import com.craigburke.document.builder.test.RendererTestBase
 
 import spock.lang.Shared
 
@@ -25,7 +26,7 @@ class TableRendererSpec extends RendererTestBase {
 
     def setup() {
         table = new Table(margin:Margin.NONE, padding:20, border:[size:3], columns:[1])
-        TextBlock paragraph = makeParagraph(5)
+        Paragraph paragraph = makeParagraph(5)
         paragraph.margin = Margin.NONE
         tableRenderer = makeTableElement(table, paragraph, rowCount)
         defaultRowHeight = (defaultLineHeight * 5f) + (table.padding * 2f) + (table.border.size)
@@ -76,8 +77,9 @@ class TableRendererSpec extends RendererTestBase {
         tableRenderer.fullyParsed
     }
 
-    private TableRenderer makeTableElement(Table table, TextBlock paragraph, int rows) {
-        Document tableDocument = makeDocument()
+    private TableRenderer makeTableElement(Table table, Paragraph paragraph, int rows) {
+        makeDocument()
+        Document tableDocument = document
         table.parent = tableDocument
         int cellCount = table.columns.size()
 
@@ -95,7 +97,6 @@ class TableRendererSpec extends RendererTestBase {
         table.updateRowspanColumns()
         table.normalizeColumnWidths()
 
-        PdfDocument pdfDocument = new PdfDocument(tableDocument)
-        new TableRenderer(table, pdfDocument, 0)
+        new TableRenderer(table, document, 0)
     }
 }

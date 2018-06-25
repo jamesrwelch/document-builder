@@ -1,13 +1,20 @@
-package com.craigburke.document.builder
+package com.craigburke.document.builder.util
 
+import com.craigburke.document.core.dom.BaseNode
 import com.craigburke.document.core.dom.attribute.Font
+import com.craigburke.document.core.dom.attribute.TextBlockType
 import com.craigburke.document.core.dom.block.Document
+import com.craigburke.document.core.dom.block.Paragraph
+import com.craigburke.document.core.dom.block.Table
 import com.craigburke.document.core.dom.block.table.Cell
-import com.craigburke.document.core.dom.block.text.TextBlock
+import com.craigburke.document.core.dom.text.Heading
 import com.craigburke.document.core.dom.text.Text
+import com.craigburke.document.core.dom.text.TextNode
 
 import org.apache.pdfbox.text.PDFTextStripper
 import org.apache.pdfbox.text.TextPosition
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Extract the content from a pdf file from paragraphs and tables. There are limitations but works for simple tests
@@ -15,6 +22,8 @@ import org.apache.pdfbox.text.TextPosition
  * @author Craig Burke
  */
 class PdfContentExtractor extends PDFTextStripper {
+
+    private static final Logger logger = LoggerFactory.getLogger(PdfContentExtractor)
 
     private tablePosition = [row: 0, cell: 0]
     private int currentChildNumber = 0
@@ -26,7 +35,7 @@ class PdfContentExtractor extends PDFTextStripper {
         this.document = document
     }
 
-    private getCurrentChild() {
+    private BaseNode getCurrentChild() {
         if (!document.children || document.children.size() < currentChildNumber) {
             null
         } else {
@@ -43,66 +52,73 @@ class PdfContentExtractor extends PDFTextStripper {
         updateChildNumber(text)
 
         Font currentFont = new Font(family: text.font.baseFont, size: text.fontSize)
-        def textNode
+        TextNode textNode
 
-        if (currentChild.getClass() == TextBlock) {
+        if (currentChild instanceof Paragraph) {
             textNode = processParagraph(text, currentFont)
-        } else {
+        } else if (currentChild instanceof Table) {
             textNode = processTable(text, currentFont)
+        } else if (currentChild instanceof Heading) {
+            textNode = processHeading(text, currentFont)
+        } else {
+            logger.warn("Unexpected child in process text position: {}", currentChild.getClass())
         }
 
         textNode?.value += text.unicode
         lastPosition = text
     }
 
-    private processTable(TextPosition text, Font font) {
-        def textNode
+    private TextNode processTable(TextPosition text, Font font) {
+        TextNode textNode
 
-        Cell cell = currentChild.children[tablePosition.row].children[tablePosition.cell]
-        TextBlock paragraph = cell.children[0]
+        Cell cell = (currentChild as Table).rows[tablePosition.row].cells[tablePosition.cell]
+        Paragraph paragraph = cell.children[0]
         paragraph.font = paragraph.font ?: font.clone()
 
         if (!paragraph.children || isNewSection(text)) {
             textNode = getText(paragraph, font)
-            paragraph.children << textNode
         } else {
-            textNode = paragraph.children.last()
+            textNode = paragraph.children.last() as TextNode
         }
 
         textNode
     }
 
-    private processParagraph(TextPosition text, Font font) {
-        def textNode
+    private TextNode processParagraph(TextPosition text, Font font) {
+        TextNode textNode
 
-        if (!currentChild.children) {
-            textNode = getText(currentChild, font)
-            currentChild.children << textNode
-            setParagraphProperties(currentChild, text, font)
+        Paragraph paragraph = currentChild as Paragraph
+        if (!paragraph.children) {
+            textNode = getText(paragraph, font)
+            setTextBlockTypeProperties(paragraph, text, font)
         } else if (isNewSection(text)) {
-            textNode = getText(currentChild, font)
-            currentChild.children << textNode
+            textNode = getText(paragraph, font)
         } else {
-            textNode = currentChild.children.last()
+            textNode = paragraph.children.last() as TextNode
         }
 
         textNode
     }
 
-    private void setParagraphProperties(paragraph, TextPosition text, Font font) {
-        paragraph.font = font.clone()
-        paragraph.margin.left = text.x - document.margin.left
-        int totalPageWidth = text.pageWidth - document.margin.right - document.margin.left
-        paragraph.margin.right = totalPageWidth - text.width - paragraph.margin.left
+    private TextNode processHeading(TextPosition text, Font font) {
+        setTextBlockTypeProperties(currentChild as Heading, text, font)
+        currentChild as Heading
+    }
 
-        BigDecimal lineHeight = font.size + (font.size * paragraph.lineSpacingMultiplier)
+    private void setTextBlockTypeProperties(TextBlockType textBlockType, TextPosition text, Font font) {
+        textBlockType.font = font.clone()
+        textBlockType.margin.left = text.x - document.margin.left
+        BigDecimal totalPageWidth = text.pageWidth - document.margin.right - document.margin.left
+        textBlockType.margin.right = totalPageWidth - text.width - textBlockType.margin.left
+
+        BigDecimal lineHeight = font.size + (font.size * textBlockType.lineSpacingMultiplier)
         BigDecimal textOffset = lineHeight - font.size
 
-        int topMargin = Math.ceil(text.y - document.margin.top - lineHeight + textOffset)
-        paragraph.margin.top = Math.round(topMargin)
+        BigDecimal topMargin = Math.ceil(text.y - document.margin.top - lineHeight + textOffset)
+        textBlockType.margin.top = Math.round(topMargin)
     }
 
-    private Text getText(paragraph, Font font) {
+    private Text getText(Paragraph paragraph, Font font) {
         new Text(parent: paragraph, value: '', font: font.clone())
     }
 
