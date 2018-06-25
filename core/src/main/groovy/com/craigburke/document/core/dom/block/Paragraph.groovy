@@ -1,6 +1,7 @@
 package com.craigburke.document.core.dom.block
 
 import com.craigburke.document.core.dom.BaseNode
+import com.craigburke.document.core.dom.Image
 import com.craigburke.document.core.dom.LineBreak
 import com.craigburke.document.core.dom.attribute.BackgroundAssignable
 import com.craigburke.document.core.dom.attribute.Bookmarkable
@@ -49,6 +50,10 @@ class Paragraph extends BlockNode<Document, BaseNode> implements Bookmarkable, B
         }
 
         elements
+    }
+
+    List<Image> getAllImages() {
+        children?.findAll {it instanceof Image} as List<Image>
     }
 
     @Override

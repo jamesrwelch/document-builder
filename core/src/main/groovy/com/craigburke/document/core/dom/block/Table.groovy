@@ -24,6 +24,10 @@ class Table extends BlockNode<BlockNode, Row> implements BackgroundAssignable {
         children[index]
     }
 
+    Row row(Integer index) {
+        children[index]
+    }
+
     int getColumnCount() {
         if (columns) {
             columns.size()
@@ -87,14 +91,6 @@ class Table extends BlockNode<BlockNode, Row> implements BackgroundAssignable {
 
     }
 
-    private BigDecimal getMaxWidth() {
-        if (parent instanceof Cell) {
-            Table outerTable = parent.getTable()
-            return parent.width - (outerTable.padding * 2)
-        }
-        (parent as Document).width - parent.margin.left - parent.margin.right
-    }
-
     @Override
     Margin getDefaultMargin() {
         DEFAULT_MARGIN
@@ -105,4 +101,13 @@ class Table extends BlockNode<BlockNode, Row> implements BackgroundAssignable {
         super.setNodeProperties(nodePropertiesMap)
         setNodeBackground(nodePropertiesMap)
     }
+
+    private BigDecimal getMaxWidth() {
+        if (parent instanceof Cell) {
+            Table outerTable = parent.getTable()
+            return parent.width - (outerTable.padding * 2)
+        }
+        (parent as Document).width - parent.margin.left - parent.margin.right
+    }
+
 }

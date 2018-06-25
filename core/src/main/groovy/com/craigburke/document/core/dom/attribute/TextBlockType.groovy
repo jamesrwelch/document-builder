@@ -9,19 +9,9 @@ interface TextBlockType extends ParentAware {
 
     Margin getMargin()
 
-    void setMargin(Margin margin)
-
     String getRef()
 
-    void setRef(String ref)
-
     Color getBackground()
-
-    void setBackground(Color color)
-
-    void setBackground(String value)
-
-    void setNodeBackground(List<Map> nodeProperties)
 
     BigDecimal getLineSpacing()
 
@@ -29,8 +19,7 @@ interface TextBlockType extends ParentAware {
 
     Align getAlign()
 
-    void setAlign(Align align)
+    Font getFont()
 
-    void setAlign(String value)
-
+    void setFont(Font font)
 }

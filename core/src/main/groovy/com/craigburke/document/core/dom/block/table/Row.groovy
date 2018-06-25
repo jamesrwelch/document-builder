@@ -24,6 +24,14 @@ class Row extends BlockNode<Table, Cell> implements BackgroundAssignable {
         addToChildren(indexToAddAt, cell) as Row
     }
 
+    Table getTable() {
+        parent
+    }
+
+    Cell cell(Integer index) {
+        children[index]
+    }
+
     @Override
     Margin getDefaultMargin() {
         Margin.NONE

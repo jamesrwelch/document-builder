@@ -24,8 +24,8 @@ class CreateApi implements Api {
 
     CreateApi document(Map<String, Object> attributes = [:],
                        @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DocumentApi) Closure closure = null) {
-        try {
-            // The following should be defined before the document is actually created
+
+        // The following should be defined before the document is actually created
             if (attributes.header) header attributes.remove('header') as Closure
             if (attributes.footer) footer attributes.remove('footer') as Closure
             if (attributes.template) template attributes.remove('template') as Closure
@@ -39,9 +39,7 @@ class CreateApi implements Api {
             builder.checkPageCount()
 
             builder.writeDocument()
-        } finally {
-            builder.close()
-        }
+
         this
     }
 

@@ -41,10 +41,14 @@ abstract class DocumentBuilder<T extends Document> {
     }
 
     DocumentBuilder create(@DelegatesTo(CreateApi) Closure closure) {
-        use(UnitCategory) {
-            CreateApi createApi = new CreateApi(this)
-            closure.delegate = createApi
-            closure.call()
+        try {
+            use(UnitCategory) {
+                CreateApi createApi = new CreateApi(this)
+                closure.delegate = createApi
+                closure.call()
+            }
+        } finally {
+            close()
         }
         this
     }

@@ -41,6 +41,10 @@ abstract class BlockNode<P extends BlockNode, C extends BaseNode> extends BaseNo
         this
     }
 
+    C child(Integer index) {
+        children[index]
+    }
+
     @Override
     void setNodeProperties(List<Map> nodePropertiesMap) {
         super.setNodeProperties(nodePropertiesMap)
