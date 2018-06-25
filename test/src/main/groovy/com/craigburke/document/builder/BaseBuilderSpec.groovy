@@ -1,11 +1,11 @@
 package com.craigburke.document.builder
 
 import com.craigburke.document.core.dom.block.Document
+import com.craigburke.document.core.dom.block.Table
 
 import com.craigburke.document.core.builder.DocumentBuilder
 
 import spock.lang.Shared
-import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.time.format.DateTimeFormatter
@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter
  * Base class for individual builder tests
  * @author Craig Burke
  */
-abstract class BaseBuilderSpec extends Specification {
+abstract class BaseBuilderSpec extends BaseSpec {
 
     @Shared
     ByteArrayOutputStream out
@@ -41,6 +41,7 @@ abstract class BaseBuilderSpec extends Specification {
     abstract String getFileExtension()
 
     def setup() {
+        println "--- ${specificationContext.currentIteration.name} ---"
         out = new ByteArrayOutputStream()
         builder = getBuilderInstance(out)
     }
@@ -112,10 +113,10 @@ abstract class BaseBuilderSpec extends Specification {
             }
         }
 
-        def table = getDocument(data).children[0]
+        Table table = getDocument(data).children[0] as Table
 
         then:
-        table.children[0].children[0].children[0].text == 'FOOBAR'
+        table.row(0).cell(0).child(0).text == 'FOOBAR'
     }
 
     def "set table options"() {
@@ -348,7 +349,7 @@ abstract class BaseBuilderSpec extends Specification {
 
     void 'test outputting document'() {
         given:
-        File testFile = new File("full_test.${getFileExtension()}")
+        File testFile = new File("/tmp/full_test.${getFileExtension()}")
         if (testFile.exists()) testFile.delete()
 
         expect:
@@ -429,6 +430,23 @@ abstract class BaseBuilderSpec extends Specification {
                     }
 
                     paragraph 'Default style'
+                }
+
+                section {
+                    heading3 'Links'
+                    paragraph {
+                        text 'Some text which is telling us something using a sensible link and display text. See'
+                        text ' '
+                        link 'http://www.google.co.uk', 'Google', font: [underline: true]
+                        text ' '
+                        text 'for more information.'
+                    }
+                    paragraph {
+                        text 'Some text which is telling us something using a link without display text. See '
+                        link ' http://www.google.co.uk '
+                        text 'for more information.'
+
+                    }
                 }
 
                 pageBreak()
@@ -668,6 +686,7 @@ abstract class BaseBuilderSpec extends Specification {
         then:
         noExceptionThrown()
         testFile.exists()
+        testFile.size() != 0
     }
 
 }
