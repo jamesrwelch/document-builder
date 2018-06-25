@@ -25,20 +25,18 @@ class CreateApi implements Api {
     CreateApi document(Map<String, Object> attributes = [:],
                        @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DocumentApi) Closure closure = null) {
 
+        if (builder.document) throw new IllegalStateException('Cannot define document inside document')
+
         // The following should be defined before the document is actually created
-            if (attributes.header) header attributes.remove('header') as Closure
-            if (attributes.footer) footer attributes.remove('footer') as Closure
-            if (attributes.template) template attributes.remove('template') as Closure
+        if (attributes.header) header attributes.remove('header') as Closure
+        if (attributes.footer) footer attributes.remove('footer') as Closure
+        if (attributes.template) template attributes.remove('template') as Closure
 
-            Document document = builder.createDocument(attributes)
-            document.templateMap = builder.templateMap ?: [:]
-            document.setNodeProperties(attributes)
+        Document document = builder.createDocument(attributes)
+        document.templateMap = builder.templateMap ?: [:]
+        document.setNodeProperties(attributes)
 
-            callClosure closure, new DocumentApi(builder, document)
-
-            builder.checkPageCount()
-
-            builder.writeDocument()
+        callClosure closure, new DocumentApi(builder, document)
 
         this
     }

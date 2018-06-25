@@ -43,9 +43,30 @@ abstract class DocumentBuilder<T extends Document> {
     DocumentBuilder create(@DelegatesTo(CreateApi) Closure closure) {
         try {
             use(UnitCategory) {
+
                 CreateApi createApi = new CreateApi(this)
                 closure.delegate = createApi
                 closure.call()
+
+                checkPageCount()
+                writeDocument()
+            }
+        } finally {
+            close()
+        }
+        this
+    }
+
+    // Use too create the document but not actually write it. Call builder.writeDocument to complete
+    DocumentBuilder createWithoutWrite(@DelegatesTo(CreateApi) Closure closure) {
+        try {
+            use(UnitCategory) {
+
+                CreateApi createApi = new CreateApi(this)
+                closure.delegate = createApi
+                closure.call()
+
+                checkPageCount()
             }
         } finally {
             close()
