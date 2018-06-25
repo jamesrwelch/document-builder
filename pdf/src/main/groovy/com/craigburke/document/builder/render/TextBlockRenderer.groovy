@@ -3,11 +3,15 @@ package com.craigburke.document.builder.render
 import com.craigburke.document.core.dom.attribute.Align
 import com.craigburke.document.core.dom.attribute.Font
 import com.craigburke.document.core.dom.attribute.ImageType
-import com.craigburke.document.core.dom.block.text.TextBlock
+import com.craigburke.document.core.dom.attribute.TextBlockType
 import com.craigburke.document.core.dom.text.Link
-import com.craigburke.document.core.dom.text.Text
+import com.craigburke.document.core.dom.text.TextNode
 
 import com.craigburke.document.builder.PdfDocument
+import com.craigburke.document.builder.element.ImageElement
+import com.craigburke.document.builder.element.TextBlockLine
+import com.craigburke.document.builder.element.TextElement
+import com.craigburke.document.builder.parser.TextBlockParser
 
 import org.apache.pdfbox.pdmodel.PDPageContentStream
 import org.apache.pdfbox.pdmodel.common.PDRectangle
@@ -17,6 +21,8 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionURI
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
@@ -25,10 +31,13 @@ import javax.imageio.ImageIO
  * Rendering element for a Paragraph node
  * @author Craig Burke
  */
-class ParagraphRenderer implements Renderable {
-    TextBlock node
+class TextBlockRenderer implements Renderable {
 
-    List<ParagraphLine> lines
+    private static final Logger logger = LoggerFactory.getLogger(TextBlockRenderer)
+
+    TextBlockType node
+
+    List<TextBlockLine> lines
 
     private int parseStart = 0
     private int linesParsed = 0
@@ -40,12 +49,12 @@ class ParagraphRenderer implements Renderable {
     private boolean fullyRendered = false
     private boolean fullyParsed = false
 
-    ParagraphRenderer(TextBlock paragraph, PdfDocument pdfDocument, float startX, float totalWidth) {
-        node = paragraph
+    TextBlockRenderer(TextBlockType textBlockType, PdfDocument pdfDocument, float startX, float totalWidth) {
+        node = textBlockType
         this.pdfDocument = pdfDocument
         this.startX = startX
         this.totalWidth = totalWidth
-        lines = ParagraphParser.getLines(paragraph, totalWidth)
+        lines = TextBlockParser.getLines(textBlockType, totalWidth)
     }
 
     boolean getFullyParsed() {
@@ -57,7 +66,7 @@ class ParagraphRenderer implements Renderable {
     }
 
     int getParseEnd() {
-        int parseEnd = Math.max(0f, (parseStart + linesParsed - 1))
+        int parseEnd = Math.max(0f, (parseStart + linesParsed - 1)).toInteger()
         Math.min(lines.size() - 1, parseEnd)
     }
 
@@ -81,12 +90,12 @@ class ParagraphRenderer implements Renderable {
         float parsedHeight = 0
 
         while (!reachedEnd) {
-            ParagraphLine line = lines[parseStart + linesParsed]
+            TextBlockLine line = lines[parseStart + linesParsed]
             parsedHeight += line.totalHeight
             linesParsed++
 
             if (parsedHeight > height) {
-                linesParsed = Math.max(0f, linesParsed - 1)
+                linesParsed = Math.max(0f, linesParsed - 1).toInteger()
                 reachedEnd = true
                 fullyParsed = false
             }
@@ -105,7 +114,7 @@ class ParagraphRenderer implements Renderable {
 
         renderBackground()
 
-        lines[parseStart..parseEnd].each { ParagraphLine line ->
+        lines[parseStart..parseEnd].each {TextBlockLine line ->
             pdfDocument.x = startX
             renderLine(line)
         }
@@ -141,10 +150,10 @@ class ParagraphRenderer implements Renderable {
         lines[parseStart..parseEnd]*.totalHeight.sum() as float ?: 0f
     }
 
-    private void renderLine(ParagraphLine line) {
+    private void renderLine(TextBlockLine line) {
         float renderStartX = startX
 
-        switch (line.paragraph.align) {
+        switch (line.textBlock.align) {
             case Align.RIGHT:
                 renderStartX += line.maxWidth - line.contentWidth
                 break
@@ -163,14 +172,16 @@ class ParagraphRenderer implements Renderable {
             else if (element instanceof ImageElement) {
                 renderImageElement(element as ImageElement)
                 pdfDocument.x += element.node.width
+            } else {
+                logger.warn('Unexpected element: {}', element.getClass())
             }
         }
 
         pdfDocument.y += line.lineSpacing
     }
 
-    private void renderTextElement(TextElement element, ParagraphLine line) {
-        Text text = element.node
+    private void renderTextElement(TextElement element, TextBlockLine line) {
+        TextNode text = element.node
         Font font = text.font
 
         PDPageContentStream contentStream = pdfDocument.contentStream
@@ -179,7 +190,7 @@ class ParagraphRenderer implements Renderable {
         float bottomY = pdfDocument.translateY(pdfDocument.y + line.contentHeight - line.lineSpacing)
 
         if (text.background) {
-            float height = line.contentHeight + line.lineSpacing
+            float height = (line.contentHeight + line.lineSpacing).toFloat()
             contentStream.setNonStrokingColor(*text.background.rgb)
             contentStream.addRect(startX, bottomY, element.width, height)
             contentStream.fill()
@@ -190,7 +201,7 @@ class ParagraphRenderer implements Renderable {
             float endX = startX + element.width
 
             contentStream.setStrokingColor(*font.color.rgb)
-            float lineWidth = ((font.size as Float) / 16f)
+            float lineWidth = ((font.size as Float) / 16f).toFloat()
             contentStream.setLineWidth(lineWidth)
 
             contentStream.moveTo(startX, textBottom)
@@ -234,8 +245,8 @@ class ParagraphRenderer implements Renderable {
             img = JPEGFactory.createFromImage(pdfDocument.pdDocument, bufferedImage)
         }
 
-        int width = element.node.width
-        int height = element.node.height
+        BigDecimal width = element.node.width
+        BigDecimal height = element.node.height
 
         pdfDocument.contentStream.drawImage(img, pdfDocument.x, pdfDocument.translatedY, width, height)
     }

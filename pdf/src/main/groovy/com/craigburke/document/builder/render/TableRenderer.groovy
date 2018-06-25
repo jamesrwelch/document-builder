@@ -38,7 +38,7 @@ class TableRenderer implements Renderable {
         }
 
         boolean reachedEnd = false
-        float remainingHeight = height - (onFirstPage ? table.border.size : 0)
+        BigDecimal remainingHeight = height - (onFirstPage ? table.border.size : 0)
 
         while (!reachedEnd) {
             RowRenderer currentRenderer = rowRenderers[parseEnd]
