@@ -1,11 +1,14 @@
 package com.craigburke.document.core.dom.block
 
+import ox.softeng.document.core.dsl.DocumentApi
+
 import com.craigburke.document.core.dom.BaseNode
 import com.craigburke.document.core.dom.attribute.Dimension
 import com.craigburke.document.core.dom.attribute.EmbeddedFont
 import com.craigburke.document.core.dom.attribute.Font
 import com.craigburke.document.core.dom.attribute.Margin
 import com.craigburke.document.core.dom.attribute.PaperSize
+import groovy.transform.TypeChecked
 
 import static com.craigburke.document.core.unit.UnitUtil.inchToPoint
 
@@ -13,7 +16,8 @@ import static com.craigburke.document.core.unit.UnitUtil.inchToPoint
  * Document node
  * @author Craig Burke
  */
-abstract class Document extends BlockNode<Document, BaseNode> {
+@TypeChecked
+abstract class Document extends BlockNode<Document, BaseNode> implements DocumentApi {
 
     static final Margin DEFAULT_MARGIN = new Margin(top: 72, bottom: 72, left: 72, right: 72)
 
@@ -25,43 +29,12 @@ abstract class Document extends BlockNode<Document, BaseNode> {
     BigDecimal height = inchToPoint(PaperSize.LETTER.height)
     String orientation = PORTRAIT
 
-    private Closure template
-    private Closure header
-    private Closure footer
-
     Map templateMap
 
     private List<EmbeddedFont> embeddedFonts = []
 
-    Map<String, Map> getTemplateMap() {
-        if (templateMap == null) {
-            templateMap = loadTemplateMap()
-        }
-        templateMap
-    }
-
     List<EmbeddedFont> getEmbeddedFonts() {
         return embeddedFonts
-    }
-
-    @Deprecated
-    protected Map loadTemplateMap() {
-        Map loadedTemplateMap = [:]
-        if (template) {
-            if (template instanceof Closure) {
-                Expando templateDelegate = new Expando()
-                templateDelegate.metaClass.methodMissing = {name, args ->
-                    setProperty(name, args)
-                }
-                template.resolveStrategy = Closure.DELEGATE_FIRST
-                template.delegate = templateDelegate
-                template.call()
-                loadedTemplateMap = templateDelegate.getProperties()
-            } else if (template instanceof Map) {
-                loadedTemplateMap = template
-            }
-        }
-        loadedTemplateMap
     }
 
     /**
@@ -134,37 +107,7 @@ abstract class Document extends BlockNode<Document, BaseNode> {
     void setNodeFont(List<Map> nodeProperties) {
         font = new Font()
         nodeProperties.each {
-            font << it.font
+            font << (it.font as Map)
         }
-    }
-
-    @Deprecated
-    Closure getTemplate() {
-        return template
-    }
-
-    @Deprecated
-    void setTemplate(Closure template) {
-        this.template = template
-    }
-
-    @Deprecated
-    Closure getHeader() {
-        return header
-    }
-
-    @Deprecated
-    void setHeader(Closure header) {
-        this.header = header
-    }
-
-    @Deprecated
-    Closure getFooter() {
-        return footer
-    }
-
-    @Deprecated
-    void setFooter(Closure footer) {
-        this.footer = footer
     }
 }

@@ -2,43 +2,36 @@ package ox.softeng.document.core.dsl
 
 import com.craigburke.document.core.dom.block.table.Cell
 import com.craigburke.document.core.dom.block.table.Row
-
-import com.craigburke.document.core.builder.DocumentBuilder
+import groovy.transform.TypeChecked
 
 /**
  * @since 07/06/2018
  */
-class RowApi implements Api {
+@TypeChecked
+trait RowApi implements Api {
 
-    DocumentBuilder builder
-    Row row
-
-    RowApi(DocumentBuilder builder, Row row) {
-        this.row = row
-        this.builder = builder
-    }
+    abstract Row getRow()
 
     RowApi cell(Map attributes = [:], String text) {
         handleCell(attributes, null, text)
     }
 
-    RowApi cell(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CellApi) Closure closure) {
+    RowApi cell(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Cell) Closure closure) {
         cell([:], closure)
     }
 
-    RowApi cell(Map attributes = [:], @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CellApi) Closure closure = null) {
+    RowApi cell(Map attributes = [:], @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Cell) Closure closure = null) {
         handleCell(attributes, closure, null)
     }
 
     private RowApi handleCell(Map attributes, Closure closure, String text) {
-        Cell cell = new Cell(attributes)
+        Cell cell = Cell.create(attributes)
         row.addToChildren(cell)
         cell.setNodeProperties(attributes)
-        CellApi cellApi = new CellApi(builder, cell)
         if (closure) {
-            callClosure closure, cellApi
+            callClosure closure, cell
         } else if (text) {
-            cellApi.text(attributes, text)
+            cell.text(attributes, text)
         }
 
         this

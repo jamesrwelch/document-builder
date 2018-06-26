@@ -1,29 +1,25 @@
 package ox.softeng.document.core.dsl
 
-import com.craigburke.document.core.dom.block.Document
-
 import com.craigburke.document.core.builder.DocumentBuilder
-
+import com.craigburke.document.core.dom.block.Document
+import groovy.transform.TypeChecked
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 
 /**
  * @since 31/05/2018
  */
-class CreateApi implements Api {
+@TypeChecked
+trait CreateApi implements Api {
 
-    DocumentBuilder builder
+    abstract DocumentBuilder getBuilder()
 
-    CreateApi(DocumentBuilder builder) {
-        this.builder = builder
-    }
-
-    CreateApi document(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DocumentApi) Closure closure) {
+    CreateApi document(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Document) Closure closure) {
         document([:], closure)
     }
 
     CreateApi document(Map<String, Object> attributes = [:],
-                       @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DocumentApi) Closure closure = null) {
+                       @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Document) Closure closure = null) {
 
         if (builder.document) throw new IllegalStateException('Cannot define document inside document')
 
@@ -36,7 +32,7 @@ class CreateApi implements Api {
         document.templateMap = builder.templateMap ?: [:]
         document.setNodeProperties(attributes)
 
-        callClosure closure, new DocumentApi(builder, document)
+        callClosure closure, document
 
         this
     }
@@ -51,13 +47,13 @@ class CreateApi implements Api {
     }
 
     CreateApi header(@ClosureParams(value = SimpleType, options = 'com.craigburke.document.core.dom.attribute.HeaderFooterOptions')
-                     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DocumentApi) Closure closure) {
+                     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Document) Closure closure) {
         builder.headerClosure = closure
         this
     }
 
     CreateApi footer(@ClosureParams(value = SimpleType, options = 'com.craigburke.document.core.dom.attribute.HeaderFooterOptions')
-                     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DocumentApi) Closure closure) {
+                     @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Document) Closure closure) {
         builder.footerClosure = closure
         this
     }

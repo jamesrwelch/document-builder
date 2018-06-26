@@ -5,13 +5,16 @@ import com.craigburke.document.core.dom.attribute.Margin
 import com.craigburke.document.core.dom.attribute.MarginAssignable
 import com.craigburke.document.core.dom.attribute.TextBlockType
 import com.craigburke.document.core.dom.block.Document
+import groovy.transform.TypeChecked
+import groovy.transform.TypeCheckingMode
 
 /**
  * Created by craig on 3/25/15.
  */
+@TypeChecked
 class Heading extends TextNode<Document> implements MarginAssignable, TextBlockType, Alignable {
     static Margin DEFAULT_MARGIN = new Margin(top: 12, bottom: 12, left: 0, right: 0)
-    static final FONT_SIZE_MULTIPLIERS = [2, 1.5, 1.17, 1.12, 0.83, 0.75]
+    static final List<BigDecimal> FONT_SIZE_MULTIPLIERS = [2.0, 1.5, 1.17, 1.12, 0.83, 0.75]
     int level = 1
 
     BigDecimal lineSpacing
@@ -30,7 +33,7 @@ class Heading extends TextNode<Document> implements MarginAssignable, TextBlockT
         font = cloneParentFont()
         font.size = null
         nodeProperties.each {
-            font << it.font
+            font << (it.font as Map)
         }
         if (!font.size) {
             font.size = document.font.size * Heading.FONT_SIZE_MULTIPLIERS[level - 1]
@@ -47,7 +50,12 @@ class Heading extends TextNode<Document> implements MarginAssignable, TextBlockT
         super.setNodeProperties(nodePropertiesMap)
         margin = defaultMargin.clone()
         nodePropertiesMap.each {
-            margin << it.margin
+            if (it.margin) margin << (it.margin as Map)
         }
+    }
+
+    @TypeChecked(TypeCheckingMode.SKIP)
+    static Heading create(Map attributes) {
+        new Heading(attributes)
     }
 }

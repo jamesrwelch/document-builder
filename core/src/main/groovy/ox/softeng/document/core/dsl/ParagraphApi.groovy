@@ -2,10 +2,8 @@ package ox.softeng.document.core.dsl
 
 import com.craigburke.document.core.dom.Image
 import com.craigburke.document.core.dom.LineBreak
-import com.craigburke.document.core.dom.attribute.Font
 import com.craigburke.document.core.dom.block.Paragraph
-
-import com.craigburke.document.core.builder.DocumentBuilder
+import groovy.transform.TypeChecked
 
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
@@ -13,23 +11,10 @@ import javax.imageio.ImageIO
 /**
  * @since 07/06/2018
  */
-class ParagraphApi implements Api {
+@TypeChecked
+trait ParagraphApi implements Api {
 
-    DocumentBuilder builder
-    Paragraph paragraph
-
-    ParagraphApi(DocumentBuilder builder) {
-        this.builder = builder
-    }
-
-    ParagraphApi(DocumentBuilder builder, Paragraph paragraph) {
-        this(builder)
-        this.paragraph = paragraph
-    }
-
-    Font getFont() {
-        paragraph.font
-    }
+    abstract Paragraph getParagraph()
 
     ParagraphApi text(Map attributes = [:], String text) {
         getParagraph().add(text, attributes)
@@ -37,7 +22,9 @@ class ParagraphApi implements Api {
     }
 
     ParagraphApi link(Map attributes = [:], String value) {
-        link(attributes, attributes.url ?: value, attributes.value ?: value)
+        String url = attributes.url as String ?: value
+        String text = attributes.value as String ?: value
+        link(attributes, url, text)
 
     }
 
@@ -57,7 +44,7 @@ class ParagraphApi implements Api {
     }
 
     ParagraphApi image(Map attributes) {
-        Image image = new Image(attributes)
+        Image image = Image.create(attributes)
 
         if (!image.width || !image.height) {
             BufferedImage bufferedImage = image.withInputStream {ImageIO.read(it)} as BufferedImage
@@ -75,7 +62,6 @@ class ParagraphApi implements Api {
         }
 
         image.hashName = "${image.hash}.${image.type.value}"
-        builder.imageFileNames << image.hashName
 
         getParagraph().addToChildren(image)
 

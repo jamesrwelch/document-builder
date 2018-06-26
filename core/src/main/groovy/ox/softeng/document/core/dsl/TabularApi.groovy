@@ -2,32 +2,26 @@ package ox.softeng.document.core.dsl
 
 import com.craigburke.document.core.dom.block.Table
 import com.craigburke.document.core.dom.block.table.Row
-
-import com.craigburke.document.core.builder.DocumentBuilder
+import groovy.transform.TypeChecked
 
 /**
  * @since 07/06/2018
  */
-class TabularApi implements Api {
+@TypeChecked
+trait TabularApi implements Api {
 
-    DocumentBuilder builder
-    Table table
+    abstract Table getTable()
 
-    TabularApi(DocumentBuilder builder, Table table) {
-        this.table = table
-        this.builder = builder
-    }
-
-    TabularApi row(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = RowApi) Closure closure) {
+    TabularApi row(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Row) Closure closure) {
         row([:], closure)
     }
 
-    TabularApi row(Map attributes, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = RowApi) Closure closure) {
-        Row row = new Row(attributes)
+    TabularApi row(Map attributes, @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Row) Closure closure) {
+        Row row = Row.create(attributes)
         table.addToChildren(row)
         row.setNodeProperties(attributes)
 
-        callClosure closure, new RowApi(builder, row)
+        callClosure closure, row
 
         this
     }

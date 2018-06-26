@@ -1,15 +1,20 @@
 package com.craigburke.document.core.dom.block
 
+import ox.softeng.document.core.dsl.TabularApi
+
 import com.craigburke.document.core.dom.attribute.BackgroundAssignable
 import com.craigburke.document.core.dom.attribute.Margin
 import com.craigburke.document.core.dom.block.table.Cell
 import com.craigburke.document.core.dom.block.table.Row
+import groovy.transform.TypeChecked
+import groovy.transform.TypeCheckingMode
 
 /**
  * Table node which contains children of children
  * @author Craig Burke
  */
-class Table extends BlockNode<BlockNode, Row> implements BackgroundAssignable {
+@TypeChecked
+class Table extends BlockNode<BlockNode, Row> implements BackgroundAssignable, TabularApi {
     static Margin DEFAULT_MARGIN = new Margin(top: 12, bottom: 12, left: 0, right: 0)
 
     BigDecimal padding = 10.0
@@ -39,9 +44,9 @@ class Table extends BlockNode<BlockNode, Row> implements BackgroundAssignable {
     void normalizeColumnWidths() {
         updateRowspanColumns()
 
-        width = Math.min(width ?: maxWidth, maxWidth)
+        width = Math.min(width ?: maxWidth, maxWidth.toDouble())
         if (!columns) {
-            columnCount.times {columns << 1}
+            columnCount.times {columns << 1.0}
         }
 
         List<BigDecimal> columnWidths = computeColumnWidths()
@@ -51,7 +56,7 @@ class Table extends BlockNode<BlockNode, Row> implements BackgroundAssignable {
             row.cells.eachWithIndex {column, index ->
                 int endIndex = columnWidthIndex + column.colspan - 1
                 BigDecimal missingBorderWidth = (column.colspan - 1) * border.size
-                column.width = columnWidths[columnWidthIndex..endIndex].sum() + missingBorderWidth
+                column.width = (columnWidths[columnWidthIndex..endIndex].sum() as BigDecimal) + missingBorderWidth
                 columnWidthIndex += column.colspan
                 column.findAllChildTables().each {it.normalizeColumnWidths()}
             }
@@ -110,4 +115,13 @@ class Table extends BlockNode<BlockNode, Row> implements BackgroundAssignable {
         (parent as Document).width - parent.margin.left - parent.margin.right
     }
 
+    @Override
+    Table getTable() {
+        this
+    }
+
+    @TypeChecked(TypeCheckingMode.SKIP)
+    static Table create(Map attributes) {
+        new Table(attributes)
+    }
 }

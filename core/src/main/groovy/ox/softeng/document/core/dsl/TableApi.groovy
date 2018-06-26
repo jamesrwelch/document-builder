@@ -3,29 +3,29 @@ package ox.softeng.document.core.dsl
 import com.craigburke.document.core.dom.block.BlockNode
 import com.craigburke.document.core.dom.block.Document
 import com.craigburke.document.core.dom.block.Table
-
-import com.craigburke.document.core.builder.RenderState
+import groovy.transform.TypeChecked
 
 /**
  * @since 07/06/2018
  */
+@TypeChecked
 trait TableApi<K extends BlockNode> implements Api {
 
     abstract K getCurrentNode()
 
-    TableApi table(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = TabularApi) Closure closure) {
+    TableApi table(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Table) Closure closure) {
         table([:], closure)
     }
 
-    TableApi table(Map attributes = [:], @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = TabularApi) Closure closure = null) {
-        Table table = new Table(attributes)
+    TableApi table(Map attributes = [:], @DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Table) Closure closure = null) {
+        Table table = Table.create(attributes)
         currentNode.addToChildren(table)
 
         table.setNodeProperties(attributes)
 
-        callClosure closure, new TabularApi(builder, table)
+        callClosure closure, table
 
-        if (currentNode instanceof Document || builder.renderState != RenderState.PAGE) {
+        if (currentNode instanceof Document) {
             table.normalizeColumnWidths()
         }
 

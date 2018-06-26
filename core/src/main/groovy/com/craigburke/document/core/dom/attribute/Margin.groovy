@@ -22,7 +22,7 @@ class Margin {
         right = (right == null) ? defaultMargin.right : right
     }
 
-    def leftShift(Map properties) {
+    def leftShift(Map<String, Object> properties) {
         properties?.each { key, value -> this[key] = value }
     }
 
@@ -31,5 +31,25 @@ class Margin {
         bottom = margin.bottom
         left = margin.left
         right = margin.right
+    }
+
+    void setTop(Integer top) {
+        this.top = top
+    }
+
+    void setBottom(Integer bottom) {
+        this.bottom = bottom
+    }
+
+    void setLeft(Integer left) {
+        this.left = left
+    }
+
+    void setRight(Integer right) {
+        this.right = right
+    }
+
+    Map<String, BigDecimal> toMap() {
+        [top: top, right: right, bottom: bottom, left: left]
     }
 }

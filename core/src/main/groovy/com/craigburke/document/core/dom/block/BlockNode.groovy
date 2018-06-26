@@ -5,11 +5,13 @@ import com.craigburke.document.core.dom.attribute.Alignable
 import com.craigburke.document.core.dom.attribute.Border
 import com.craigburke.document.core.dom.attribute.MarginAssignable
 import com.craigburke.document.core.dom.attribute.Stylable
+import groovy.transform.TypeChecked
 
 /**
  * The base node for all block nodes
  * @author Craig Burke
  */
+@TypeChecked
 abstract class BlockNode<P extends BlockNode, C extends BaseNode> extends BaseNode<P> implements Stylable, Alignable, MarginAssignable {
 
     Border border = new Border()
@@ -27,7 +29,7 @@ abstract class BlockNode<P extends BlockNode, C extends BaseNode> extends BaseNo
     void setNodeFont(List<Map> nodeProperties) {
         font = cloneParentFont()
         nodeProperties.each {
-            font << it.font
+            font << (it.font as Map)
         }
     }
 
@@ -51,10 +53,8 @@ abstract class BlockNode<P extends BlockNode, C extends BaseNode> extends BaseNo
         setNodeFont(nodePropertiesMap)
         margin = defaultMargin.clone()
         nodePropertiesMap.each {
-            margin << it.margin
-            if (it.border) {
-                border << it.border
-            }
+            if (it.margin) margin << (it.margin as Map)
+            if (it.border) border << (it.border as Map)
         }
     }
 }

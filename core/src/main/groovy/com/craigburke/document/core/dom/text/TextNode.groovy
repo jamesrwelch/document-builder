@@ -5,11 +5,13 @@ import com.craigburke.document.core.dom.attribute.BackgroundAssignable
 import com.craigburke.document.core.dom.attribute.Bookmarkable
 import com.craigburke.document.core.dom.attribute.Stylable
 import com.craigburke.document.core.dom.block.BlockNode
+import groovy.transform.TypeChecked
 
 /**
  * Text node
  * @author Craig Burke
  */
+@TypeChecked
 abstract class TextNode<P extends BlockNode> extends BaseNode<P> implements Stylable, Bookmarkable, BackgroundAssignable {
 
     String value
@@ -25,7 +27,7 @@ abstract class TextNode<P extends BlockNode> extends BaseNode<P> implements Styl
     void setNodeFont(List<Map> nodeProperties) {
         font = cloneParentFont()
         nodeProperties.each {
-            font << it.font
+            font << (it.font as Map)
         }
     }
 

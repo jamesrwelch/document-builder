@@ -2,6 +2,10 @@ package com.craigburke.document.core.dom
 
 import com.craigburke.document.core.dom.attribute.ImageType
 import com.craigburke.document.core.dom.block.Paragraph
+import groovy.transform.TypeChecked
+import groovy.transform.TypeCheckingMode
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.SimpleType
 
 import java.security.MessageDigest
 
@@ -9,6 +13,7 @@ import java.security.MessageDigest
  * Image node
  * @author Craig Burke
  */
+@TypeChecked
 class Image extends BaseNode<Paragraph> {
     String hashName
     ImageType type = ImageType.JPG
@@ -28,7 +33,7 @@ class Image extends BaseNode<Paragraph> {
         this.@data
     }
 
-    def withInputStream(Closure work) {
+    def withInputStream(@ClosureParams(value = SimpleType, options = 'java.io.ByteArrayInputStream') Closure work) {
         work.call(new ByteArrayInputStream(getData()))
     }
 
@@ -38,5 +43,10 @@ class Image extends BaseNode<Paragraph> {
             b -> hexHash.format('%02x', b)
         }
         hexHash.toString()
+    }
+
+    @TypeChecked(TypeCheckingMode.SKIP)
+    static Image create(Map attributes) {
+        new Image(attributes)
     }
 }

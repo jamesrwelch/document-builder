@@ -1,19 +1,14 @@
 package ox.softeng.document.core.dsl
 
-import com.craigburke.document.core.builder.DocumentBuilder
+import groovy.transform.TypeChecked
 
 /**
  * @since 07/06/2018
  */
-trait Api {
+@TypeChecked
+interface Api {
 
-    abstract DocumentBuilder getBuilder()
+    void callClosure(Closure closure, def delegate)
 
-    void callClosure(Closure closure, def delegate, int resolveStrategy = Closure.DELEGATE_FIRST) {
-        if (closure) {
-            closure.resolveStrategy = resolveStrategy
-            closure.delegate = delegate
-            closure.call()
-        }
-    }
+    void callClosure(Closure closure, def delegate, int resolveStrategy)
 }

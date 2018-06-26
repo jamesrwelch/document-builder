@@ -1,14 +1,18 @@
 package com.craigburke.document.core.dom
 
+import ox.softeng.document.core.dsl.Api
+
 import com.craigburke.document.core.dom.attribute.ParentAware
 import com.craigburke.document.core.dom.block.BlockNode
 import com.craigburke.document.core.dom.block.Document
+import groovy.transform.TypeChecked
 
 /**
  * The base node for all document nodes
  * @author Craig Burke
  */
-abstract class BaseNode<P extends BaseNode> implements ParentAware<P> {
+@TypeChecked
+abstract class BaseNode<P extends BaseNode> implements ParentAware<P>, Api {
     P parent
     String name
 
@@ -22,7 +26,7 @@ abstract class BaseNode<P extends BaseNode> implements ParentAware<P> {
 
     @Override
     Document getDocument() {
-        parent.getDocument()
+        parent?.getDocument()
     }
 
     void setParent(P parent) {
@@ -35,10 +39,9 @@ abstract class BaseNode<P extends BaseNode> implements ParentAware<P> {
     void setNodeProperties(Map attributes) {
         String[] templateKeys = getTemplateKeys(name)
         List<Map> nodeProperties = []
-
         templateKeys.each {String key ->
             if (document.templateMap[key]) {
-                nodeProperties << document.templateMap[key]
+                nodeProperties << (document.templateMap[key] as Map)
             }
         }
         if (attributes) nodeProperties << attributes
@@ -47,5 +50,14 @@ abstract class BaseNode<P extends BaseNode> implements ParentAware<P> {
     }
 
     void setNodeProperties(List<Map> nodePropertiesMap) {
+    }
+
+    @Override
+    void callClosure(Closure closure, Object delegate, int resolveStrategy = Closure.DELEGATE_FIRST) {
+        if (closure) {
+            closure.resolveStrategy = resolveStrategy
+            closure.delegate = delegate
+            closure.call()
+        }
     }
 }

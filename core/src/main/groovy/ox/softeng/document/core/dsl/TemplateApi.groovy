@@ -1,8 +1,11 @@
 package ox.softeng.document.core.dsl
 
+import groovy.transform.TypeChecked
+
 /**
  * @since 21/06/2018
  */
+@TypeChecked
 class TemplateApi {
 
     Map templateMap = [:]
@@ -68,7 +71,7 @@ class TemplateApi {
     }
 
     TemplateApi methodMissing(String name, def args) {
-        templateMap[name] = args instanceof Object[] ? args[0] : args
+        templateMap[name] = args instanceof Object[] ? ((Object[]) args)[0] : args
         this
     }
 }

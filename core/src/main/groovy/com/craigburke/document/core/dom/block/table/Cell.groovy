@@ -1,16 +1,21 @@
 package com.craigburke.document.core.dom.block.table
 
+import ox.softeng.document.core.dsl.CellApi
+
 import com.craigburke.document.core.dom.BaseNode
 import com.craigburke.document.core.dom.attribute.BackgroundAssignable
 import com.craigburke.document.core.dom.attribute.Margin
 import com.craigburke.document.core.dom.block.BlockNode
 import com.craigburke.document.core.dom.block.Table
+import groovy.transform.TypeChecked
+import groovy.transform.TypeCheckingMode
 
 /**
  * An individual cell for the Table node
  * @author Craig Burke
  */
-class Cell extends BlockNode<Row, BaseNode> implements BackgroundAssignable {
+@TypeChecked
+class Cell extends BlockNode<Row, BaseNode> implements BackgroundAssignable, CellApi {
     BigDecimal width
     Integer colspan = 1
     
@@ -35,5 +40,15 @@ class Cell extends BlockNode<Row, BaseNode> implements BackgroundAssignable {
     void setNodeProperties(List<Map> nodePropertiesMap) {
         super.setNodeProperties(nodePropertiesMap)
         setNodeBackground(nodePropertiesMap)
+    }
+
+    @Override
+    Cell getCell() {
+        this
+    }
+
+    @TypeChecked(TypeCheckingMode.SKIP)
+    static Cell create(Map attributes) {
+        new Cell(attributes)
     }
 }
