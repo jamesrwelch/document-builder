@@ -1,7 +1,8 @@
 package com.craigburke.document.builder
 
-import com.craigburke.document.core.EmbeddedFont
-import com.craigburke.document.core.Font
+import com.craigburke.document.core.dom.attribute.EmbeddedFont
+import com.craigburke.document.core.dom.attribute.Font
+
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.font.PDFont
 import org.apache.pdfbox.pdmodel.font.PDType0Font
@@ -15,15 +16,15 @@ class PdfFont {
 
     private static final DEFAULT_FONT = PDType1Font.HELVETICA
 
-    private static fonts = [
-            'Times-Roman': [regular: PDType1Font.TIMES_ROMAN, bold: PDType1Font.TIMES_BOLD,
-                            italic : PDType1Font.TIMES_ITALIC, boldItalic: PDType1Font.TIMES_BOLD_ITALIC],
-            'Helvetica'  : [regular: PDType1Font.HELVETICA, bold: PDType1Font.HELVETICA_BOLD,
-                            italic : PDType1Font.HELVETICA_OBLIQUE, boldItalic: PDType1Font.HELVETICA_BOLD_OBLIQUE],
-            'Courier'    : [regular: PDType1Font.COURIER, bold: PDType1Font.COURIER_BOLD,
-                            italic : PDType1Font.COURIER_OBLIQUE, boldItalic: PDType1Font.COURIER_BOLD_OBLIQUE],
-            'Symbol'     : [regular: PDType1Font.SYMBOL],
-            'Dingbat'    : [regular: PDType1Font.ZAPF_DINGBATS]
+    private static Map<String, Map> fonts = [
+        'Times-Roman': [regular: PDType1Font.TIMES_ROMAN, bold: PDType1Font.TIMES_BOLD,
+                        italic : PDType1Font.TIMES_ITALIC, boldItalic: PDType1Font.TIMES_BOLD_ITALIC],
+        'Helvetica'  : [regular: PDType1Font.HELVETICA, bold: PDType1Font.HELVETICA_BOLD,
+                        italic : PDType1Font.HELVETICA_OBLIQUE, boldItalic: PDType1Font.HELVETICA_BOLD_OBLIQUE],
+        'Courier'    : [regular: PDType1Font.COURIER, bold: PDType1Font.COURIER_BOLD,
+                        italic : PDType1Font.COURIER_OBLIQUE, boldItalic: PDType1Font.COURIER_BOLD_OBLIQUE],
+        'Symbol'     : [regular: PDType1Font.SYMBOL],
+        'Dingbat'    : [regular: PDType1Font.ZAPF_DINGBATS]
     ]
 
     static PDFont getFont(Font font) {
@@ -48,16 +49,15 @@ class PdfFont {
     }
 
     static BigDecimal getXHeight(Font font) {
-        PDFont pdFont = PdfFont.getFont(font)
+        PDFont pdFont = getFont(font)
         (font.size * pdFont.getHeight('x'.bytes[0]) / 1000f)
     }
 
     static void addFont(PDDocument document, EmbeddedFont embeddedFont) {
-        PDFont font = null
+        PDFont font
         if (embeddedFont.file) {
             font = PDType0Font.load(document, embeddedFont.file)
-        }
-        else {
+        } else {
             font = PDType0Font.load(document, embeddedFont.inputStream)
         }
         String fontName = embeddedFont.name ?: font.baseFont
