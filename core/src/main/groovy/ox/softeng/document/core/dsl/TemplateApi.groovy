@@ -63,8 +63,12 @@ class TemplateApi {
         methodMissing('image', attributes)
     }
 
+    TemplateApi link(Map attributes) {
+        methodMissing('link', attributes)
+    }
+
     TemplateApi methodMissing(String name, def args) {
-        templateMap[name] = args
+        templateMap[name] = args instanceof Object[] ? args[0] : args
         this
     }
 }

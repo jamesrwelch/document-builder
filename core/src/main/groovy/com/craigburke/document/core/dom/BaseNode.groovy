@@ -37,11 +37,11 @@ abstract class BaseNode<P extends BaseNode> implements ParentAware<P> {
         List<Map> nodeProperties = []
 
         templateKeys.each {String key ->
-            if (document.templateMap.containsKey(key)) {
+            if (document.templateMap[key]) {
                 nodeProperties << document.templateMap[key]
             }
         }
-        nodeProperties << attributes
+        if (attributes) nodeProperties << attributes
 
         setNodeProperties(nodeProperties)
     }
