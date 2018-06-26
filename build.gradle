@@ -6,17 +6,24 @@
 project.ext {
     githubUrl = 'https://github.com/jamesrwelch/document-builder'
 }
+group = 'ox.softeng.document'
+version = '1.0.0-SNAPSHOT'
 
-allprojects {
+
+subprojects {
+
+    group = rootProject.group
+    version = rootProject.version
+
     apply plugin: 'maven'
     apply plugin: 'groovy'
     apply plugin: 'idea'
     apply plugin: 'eclipse'
     apply plugin: 'codenarc'
+    apply plugin: 'maven-publish'
 
-    group = 'com.craigburke.document'
-    version = '0.6.0-SNAPSHOT'
     targetCompatibility = 1.8
+    sourceCompatibility = 1.8
 
     repositories {
         mavenLocal()
@@ -38,10 +45,8 @@ allprojects {
         toolVersion = '1.1'
         configFile = file("${rootProject.projectDir}/config/codenarc/rules.groovy")
     }
-}
 
-subprojects {
-    apply plugin: 'maven-publish'
+
 
     task sourcesJar(type: Jar) {
         classifier = 'sources'
@@ -53,61 +58,65 @@ subprojects {
         from 'build/docs/javadoc'
     }
 
-    afterEvaluate {Project project ->
 
-        publishing {
-            repositories {
-                maven {
-                    credentials {
-                        def u = System.getenv("ARTIFACTORY_USERNAME") ?: project.hasProperty("artifactory_user") ? project.artifactory_user : ''
-                        def p = System.getenv("ARTIFACTORY_PASSWORD") ?: project.hasProperty("artifactory_apiKey") ? project.artifactory_apiKey : ''
-                        username = u
-                        password = p
-                    }
-                    url project.version.endsWith('SNAPSHOT') ? "https://jenkins.cs.ox.ac.uk/artifactory/libs-snapshot-local" :
-                        "https://jenkins.cs.ox.ac.uk/artifactory/libs-release-local"
+
+    publishing {
+        repositories {
+            maven {
+                credentials {
+                    def u = System.getenv("ARTIFACTORY_USERNAME") ?: project.hasProperty("artifactory_user") ? project.artifactory_user : ''
+                    def p = System.getenv("ARTIFACTORY_PASSWORD") ?: project.hasProperty("artifactory_apiKey") ? project.artifactory_apiKey : ''
+                    username = u
+                    password = p
                 }
+                url project.version.endsWith('SNAPSHOT') ? "https://jenkins.cs.ox.ac.uk/artifactory/libs-snapshot-local" :
+                    "https://jenkins.cs.ox.ac.uk/artifactory/libs-release-local"
             }
-            publications {
-                maven(MavenPublication) {
-                    artifactId project.artifactId
-                    pom.withXml {
-                        asNode().children().last() + {
-                            resolveStrategy = Closure.DELEGATE_FIRST
-                            name project.artifactId
-                            description project.description
+        }
+        publications {
+            maven(MavenPublication) {
+                artifactId project.name
+                pom.withXml {
+                    asNode().children().last() + {
+                        resolveStrategy = Closure.DELEGATE_FIRST
+                        name project.name
+                        description project.description
+                        url project.githubUrl
+                        scm {
                             url project.githubUrl
-                            scm {
-                                url project.githubUrl
-                                connection "scm:${project.githubUrl}.git"
-                                developerConnection "scm:${project.githubUrl}.git"
+                            connection "scm:${project.githubUrl}.git"
+                            developerConnection "scm:${project.githubUrl}.git"
+                        }
+                        licenses {
+                            license {
+                                name 'Mozilla Public License, Version 2.0'
+                                url 'https://www.mozilla.org/MPL/2.0/'
+                                distribution 'repo'
                             }
-                            licenses {
-                                license {
-                                    name 'Mozilla Public License, Version 2.0'
-                                    url 'https://www.mozilla.org/MPL/2.0/'
-                                    distribution 'repo'
-                                }
+                        }
+                        developers {
+                            developer {
+                                id 'craigburke'
+                                name 'Craig Burke'
+                                email 'craig@craigburke.com'
                             }
-                            developers {
-                                developer {
-                                    id 'craigburke'
-                                    name 'Craig Burke'
-                                    email 'craig@craigburke.com'
-                                }
+                            developer {
+                                id 'olliefreeman'
+                                name 'Oliver Freeman'
+                                email 'oliver.freeman@ndm.ox.ac.uk'
                             }
                         }
                     }
-                    from components.java
-                    artifact sourcesJar
-                    artifact javadocJar
                 }
+                from components.java
+                artifact sourcesJar
+                artifact javadocJar
             }
-
         }
-    }
 
+    }
 }
+
 /*
 asciidoctor {
     sourceDir = file('docs')

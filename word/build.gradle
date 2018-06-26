@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':core')
+    compile project(':core-document-builder')
     testCompile project(':test')
 
     String POI_VERSION = '3.13'
@@ -11,6 +11,5 @@ dependencies {
 }
 
 project.ext {
-    artifactId = 'word'
     description = 'Groovy Word Document Builder'
 }
