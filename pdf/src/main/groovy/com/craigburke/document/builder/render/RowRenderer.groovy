@@ -1,18 +1,20 @@
 package com.craigburke.document.builder.render
 
+import com.craigburke.document.builder.PdfDocument
 import com.craigburke.document.core.dom.block.Table
 import com.craigburke.document.core.dom.block.table.Cell
 import com.craigburke.document.core.dom.block.table.Row
-
-import com.craigburke.document.builder.PdfDocument
-
 import org.apache.pdfbox.pdmodel.PDPageContentStream
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Rendering element for the Row node
  * @author Craig Burke
  */
 class RowRenderer implements Renderable {
+
+    private static final Logger logger = LoggerFactory.getLogger(RowRenderer)
 
     Row row
     List<CellRenderer> cellRenderers = []
@@ -45,7 +47,7 @@ class RowRenderer implements Renderable {
     }
 
     float getParsedHeight() {
-        Float parsedHeight = cellRenderers*.parsedHeight.max() ?: 0 as Float
+        Float parsedHeight = cellRenderers*.currentHeight.max() ?: 0 as Float
         if (fullyParsed && parsedHeight > 0) {
             parsedHeight += table.border.size
         }

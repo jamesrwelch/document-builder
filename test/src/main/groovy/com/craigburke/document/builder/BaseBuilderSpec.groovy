@@ -1,10 +1,8 @@
 package com.craigburke.document.builder
 
+import com.craigburke.document.core.builder.DocumentBuilder
 import com.craigburke.document.core.dom.block.Document
 import com.craigburke.document.core.dom.block.Table
-
-import com.craigburke.document.core.builder.DocumentBuilder
-
 import spock.lang.Shared
 import spock.lang.Unroll
 
@@ -346,6 +344,131 @@ abstract class BaseBuilderSpec extends BaseSpec {
         notThrown(Exception)
     }
 
+    void 'test table in table rendering'() {
+        given:
+        File testFile = new File("/tmp/table_in_table.${getFileExtension()}")
+        if (testFile.exists()) testFile.delete()
+
+        expect:
+        !testFile.exists()
+
+        when:
+        DocumentBuilder builder = getBuilderInstance(new FileOutputStream(testFile))
+
+        builder.create {
+            document(font: [family: 'Helvetica', size: 14.pt], margin: [top: 0.75.inches], pageCount: 8) {
+
+                heading1 "Tables in Table"
+
+                heading2 'Tables in table', font: [italic: true]
+
+                heading3 'Simple'
+                table {
+                    row {
+                        cell {
+                            text 'Cell1-1'
+                        }
+                        cell {
+                            table {
+                                row {
+                                    cell 'INNER-1'
+                                    cell 'INNER-2'
+                                }
+                            }
+                        }
+                    }
+                    row {
+                        cell 'Cell2-1'
+                        cell 'Cell2-2'
+                    }
+                }
+
+                heading3 'Complex'
+                table(columns: [1, 2]) {
+                    row {
+                        cell {
+                            text 'Backgrounds'
+                        }
+                        cell {
+                            table(background: '#6495ED') {
+                                row {
+                                    cell 'Cell1-1'
+                                    cell 'Cell1-1'
+                                }
+                                row(background: '#FFFFFF') {
+                                    cell 'Cell2-1'
+                                    cell 'Cell2-2'
+                                }
+                                row {
+                                    cell 'Cell3-1', background: '#FFD700'
+                                    cell 'Cell3-2'
+                                }
+                            }
+                        }
+                    }
+                    row {
+                        cell 'Single entry'
+                        cell 'Some text', font: [bold: true]
+                    }
+
+                    row {
+                        cell 'Row spanning'
+                        cell {
+                            table {
+                                row {
+                                    cell 'Cell1-1', rowspan: 2
+                                    cell 'Cell1-2'
+                                    cell 'Cell1-3'
+                                }
+                                row {
+                                    cell 'Cell2-1'
+                                    cell 'Cell2-2'
+                                }
+                                row {
+                                    cell 'Cell3-1'
+                                    cell 'Cell3-2'
+                                    cell 'Cell3-3'
+                                }
+                            }
+                        }
+                    }
+                    row {
+                        cell 'Column Widths'
+                        cell {
+                            table(columns: [1, 2, 3]) {
+                                row {
+                                    cell 'Cell1-1'
+                                    cell 'Cell1-2'
+                                    cell 'Cell1-3'
+                                }
+                            }
+                        }
+                    }
+                    row {
+                        cell 'Column Spanning'
+                        cell {
+                            table {
+                                row {
+                                    cell 'Cell1', colspan: 2
+                                    cell 'Cell1-2'
+                                }
+                                row {
+                                    cell 'Cell2-1'
+                                    cell 'Cell2-2'
+                                    cell 'Cell2-3'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        then:
+        noExceptionThrown()
+        testFile.exists()
+        testFile.size() != 0
+    }
 
     void 'test outputting document'() {
         given:
@@ -374,10 +497,11 @@ abstract class BaseBuilderSpec extends BaseSpec {
             }
             template {
                 heading(font: [underline: true])
+                link(font: [underline: true])
             }
             document(font: [family: 'Helvetica', size: 14.pt], margin: [top: 0.75.inches], pageCount: 8) {
 
-                heading1 "Groovy Document Builder v.0.5.0", font: [color: '#990000', size: 22.pt]
+                heading1 "Groovy Document Builder v.1.0.0", font: [color: '#990000', size: 22.pt]
 
                 heading2 "Paragraphs"
 
@@ -411,6 +535,8 @@ abstract class BaseBuilderSpec extends BaseSpec {
                     }
                 }
 
+                pageBreak()
+
                 section {
                     heading3 'Text play inside paragraphs'
 
@@ -437,7 +563,7 @@ abstract class BaseBuilderSpec extends BaseSpec {
                     paragraph {
                         text 'Some text which is telling us something using a sensible link and display text. See'
                         text ' '
-                        link 'http://www.google.co.uk', 'Google', font: [underline: true]
+                        link 'http://www.google.co.uk', 'Google'
                         text ' '
                         text 'for more information.'
                     }
@@ -451,7 +577,7 @@ abstract class BaseBuilderSpec extends BaseSpec {
 
                 pageBreak()
 
-                heading2 "Tables"
+                heading2 'Tables'
 
                 section {
                     heading3 'Alignment, Play and Padding', font: [italic: true]
@@ -688,5 +814,6 @@ abstract class BaseBuilderSpec extends BaseSpec {
         testFile.exists()
         testFile.size() != 0
     }
+
 
 }

@@ -1,10 +1,9 @@
 package com.craigburke.document.builder.render
 
+import com.craigburke.document.builder.PdfDocument
 import com.craigburke.document.core.dom.block.Paragraph
 import com.craigburke.document.core.dom.block.Table
 import com.craigburke.document.core.dom.block.table.Cell
-
-import com.craigburke.document.builder.PdfDocument
 
 /**
  * Rendering element for the cell node
@@ -59,7 +58,7 @@ class CellRenderer implements Renderable {
         if (!childRenderers || !onLastRowspanRow) {
             return 0
         }
-        float parsedHeight = (childRenderers*.parsedHeight.sum() ?: 0f) as float
+        float parsedHeight = (childRenderers*.currentHeight.sum() ?: 0f) as float
 
         if (onFirstPage && parsedHeight) {
             parsedHeight += padding

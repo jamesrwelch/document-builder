@@ -33,6 +33,10 @@ trait Renderable {
         renderCount = renderCount + 1
     }
 
+    float getCurrentHeight() {
+        renderedHeight ?: parsedHeight
+    }
+
     boolean getOnFirstPage() {
         (renderCount <= 1)
     }
