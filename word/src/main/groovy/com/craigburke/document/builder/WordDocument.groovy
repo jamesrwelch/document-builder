@@ -1,7 +1,6 @@
 package com.craigburke.document.builder
 
 import com.craigburke.document.core.dom.block.Document
-
 import groovy.xml.StreamingMarkupBuilder
 
 import java.util.zip.ZipEntry
@@ -166,10 +165,10 @@ class WordDocument extends Document {
     }
 
     String addLink(String url, DocumentPartType partType) {
-        addRelationship(url,
-            'http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink',
-             partType,
-             'External'
+        addRelationship(url.trim(),
+                        'http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink',
+                        partType,
+                        'External'
         )
     }
 

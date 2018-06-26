@@ -1,18 +1,16 @@
 package com.craigburke.document.builder.render
 
+import com.craigburke.document.builder.PdfDocument
+import com.craigburke.document.builder.element.ImageElement
+import com.craigburke.document.builder.element.TextBlockLine
+import com.craigburke.document.builder.element.TextElement
+import com.craigburke.document.builder.parser.TextBlockParser
 import com.craigburke.document.core.dom.attribute.Align
 import com.craigburke.document.core.dom.attribute.Font
 import com.craigburke.document.core.dom.attribute.ImageType
 import com.craigburke.document.core.dom.attribute.TextBlockType
 import com.craigburke.document.core.dom.text.Link
 import com.craigburke.document.core.dom.text.TextNode
-
-import com.craigburke.document.builder.PdfDocument
-import com.craigburke.document.builder.element.ImageElement
-import com.craigburke.document.builder.element.TextBlockLine
-import com.craigburke.document.builder.element.TextElement
-import com.craigburke.document.builder.parser.TextBlockParser
-
 import org.apache.pdfbox.pdmodel.PDPageContentStream
 import org.apache.pdfbox.pdmodel.common.PDRectangle
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory
@@ -222,7 +220,7 @@ class TextBlockRenderer implements Renderable {
             Link link = text as Link
             PDRectangle position = new PDRectangle(startX, bottomY, element.width as float, line.totalHeight)
 
-            PDActionURI action = new PDActionURI(URI: link.url)
+            PDActionURI action = new PDActionURI(URI: link.url.trim())
             PDAnnotationLink linkAnnotation = new PDAnnotationLink()
             PDBorderStyleDictionary border = new PDBorderStyleDictionary(width: 0)
             linkAnnotation.borderStyle = border
