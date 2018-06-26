@@ -7,7 +7,7 @@ project.ext {
     githubUrl = 'https://github.com/jamesrwelch/document-builder'
 }
 group = 'ox.softeng.document'
-version = '1.0.0'
+version = '1.0.1-SNAPSHOT'
 
 
 subprojects {
