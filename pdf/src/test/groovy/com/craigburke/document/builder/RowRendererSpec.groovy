@@ -2,32 +2,32 @@ package com.craigburke.document.builder
 
 import com.craigburke.document.builder.render.CellRenderer
 import com.craigburke.document.builder.render.RowRenderer
-import com.craigburke.document.core.Cell
-import com.craigburke.document.core.Document
-import com.craigburke.document.core.Row
-import com.craigburke.document.core.Table
+import com.craigburke.document.builder.test.RendererTestBase
+import com.craigburke.document.core.dom.block.Table
+import com.craigburke.document.core.dom.block.table.Cell
+import com.craigburke.document.core.dom.block.table.Row
+import spock.lang.Ignore
 import spock.lang.Shared
 
 /**
  * Cell renderer tests
  * @author Craig Burke
  */
+@Ignore
 class RowRendererSpec extends RendererTestBase {
 
     @Shared List<RowRenderer> rowRenderers
 
     def setup() {
         rowRenderers = []
-        Document document = makeDocument()
         Table table = new Table(width: 800, padding: 0, border: [size: 0])
         table.parent = document
         document.children << table
 
         2.times { addRow(table) }
 
-        PdfDocument pdfDocument = new PdfDocument(document)
         table.children.each {
-            rowRenderers << new RowRenderer(it, pdfDocument, 0)
+            rowRenderers << new RowRenderer(it, document, 0)
         }
     }
 

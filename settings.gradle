@@ -1,1 +1,1 @@
-include 'core', 'pdf', 'word'
+include 'core', 'pdf', 'word','test'

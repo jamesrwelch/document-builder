@@ -1,16 +1,20 @@
 package com.craigburke.document.builder.render
 
 import com.craigburke.document.builder.PdfDocument
-import com.craigburke.document.core.Cell
-import com.craigburke.document.core.Row
-import com.craigburke.document.core.Table
+import com.craigburke.document.core.dom.block.Table
+import com.craigburke.document.core.dom.block.table.Cell
+import com.craigburke.document.core.dom.block.table.Row
 import org.apache.pdfbox.pdmodel.PDPageContentStream
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Rendering element for the Row node
  * @author Craig Burke
  */
 class RowRenderer implements Renderable {
+
+    private static final Logger logger = LoggerFactory.getLogger(RowRenderer)
 
     Row row
     List<CellRenderer> cellRenderers = []
@@ -22,7 +26,7 @@ class RowRenderer implements Renderable {
         this.pdfDocument = pdfDocument
 
         Table table = row.parent
-        float columnX = startX + table.border.size
+        BigDecimal columnX = startX + table.border.size
         row.children.each { Cell column ->
             cellRenderers << new CellRenderer(column, pdfDocument, columnX)
             columnX += column.width + table.border.size
@@ -43,7 +47,7 @@ class RowRenderer implements Renderable {
     }
 
     float getParsedHeight() {
-        float parsedHeight = cellRenderers*.parsedHeight.max() ?: 0
+        Float parsedHeight = cellRenderers*.currentHeight.max() ?: 0 as Float
         if (fullyParsed && parsedHeight > 0) {
             parsedHeight += table.border.size
         }
@@ -143,12 +147,12 @@ class RowRenderer implements Renderable {
         contentStream.setLineWidth(table.border.size)
     }
 
-    boolean isTopOfPage(float y) {
-        (y == pdfDocument.document.margin.top)
+    boolean isTopOfPage(Float y) {
+        (y == pdfDocument.document.margin.top.toFloat())
     }
 
     boolean isFirstRow() {
-        (row == row.parent.children.first())
+        (row == row.table.rows.first())
     }
 
 }

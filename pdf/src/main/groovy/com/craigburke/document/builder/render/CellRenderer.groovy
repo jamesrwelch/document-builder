@@ -1,9 +1,9 @@
 package com.craigburke.document.builder.render
 
 import com.craigburke.document.builder.PdfDocument
-import com.craigburke.document.core.Cell
-import com.craigburke.document.core.Table
-import com.craigburke.document.core.TextBlock
+import com.craigburke.document.core.dom.block.Paragraph
+import com.craigburke.document.core.dom.block.Table
+import com.craigburke.document.core.dom.block.table.Cell
 
 /**
  * Rendering element for the cell node
@@ -23,11 +23,11 @@ class CellRenderer implements Renderable {
         this.pdfDocument = pdfDocument
 
         Table table = cell.parent.parent
-        int renderWidth = cell.width - (table.padding * 2)
-        float childStartX = startX + table.padding
+        BigDecimal renderWidth = cell.width - (table.padding * 2)
+        BigDecimal childStartX = startX + table.padding
         cell.children.each { child ->
-            if (child instanceof TextBlock) {
-                childRenderers << new ParagraphRenderer(child, pdfDocument, childStartX, renderWidth)
+            if (child instanceof Paragraph) {
+                childRenderers << new TextBlockRenderer(child, pdfDocument, childStartX, renderWidth)
             }
             else if (child instanceof Table) {
                 childRenderers << new TableRenderer(child, pdfDocument, childStartX)
@@ -58,7 +58,7 @@ class CellRenderer implements Renderable {
         if (!childRenderers || !onLastRowspanRow) {
             return 0
         }
-        float parsedHeight = (childRenderers*.parsedHeight.sum() ?: 0f) as float
+        float parsedHeight = (childRenderers*.currentHeight.sum() ?: 0f) as float
 
         if (onFirstPage && parsedHeight) {
             parsedHeight += padding

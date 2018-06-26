@@ -1,8 +1,9 @@
 package com.craigburke.document.builder.render
 
+import com.craigburke.document.core.dom.block.Table
+import com.craigburke.document.core.dom.block.table.Row
+
 import com.craigburke.document.builder.PdfDocument
-import com.craigburke.document.core.Row
-import com.craigburke.document.core.Table
 
 /**
  * Rendering element for a Table node
@@ -37,7 +38,7 @@ class TableRenderer implements Renderable {
         }
 
         boolean reachedEnd = false
-        float remainingHeight = height - (onFirstPage ? table.border.size : 0)
+        BigDecimal remainingHeight = height - (onFirstPage ? table.border.size : 0)
 
         while (!reachedEnd) {
             RowRenderer currentRenderer = rowRenderers[parseEnd]
